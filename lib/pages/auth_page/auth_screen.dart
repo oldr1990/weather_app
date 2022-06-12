@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
-  AuthScreen({Key? key}) : super(key: key);
+  const AuthScreen({Key? key}) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -18,15 +18,20 @@ class _AuthScreenState extends State<AuthScreen> {
     super.initState();
     _emailController.addListener(() {
       setState(() {
-        _invalidEmail = _emailController.text.contains(" ");
+        _invalidEmail = !RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(_emailController.text);
       });
     });
     _passwordController.addListener(() {
       setState(() {
-        _invalidPassword = _passwordController.text.contains(" ");
+        _invalidPassword =
+            !RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$')
+                .hasMatch(_passwordController.text);
       });
     });
   }
+  //Walidate Email
 
   @override
   void dispose() {

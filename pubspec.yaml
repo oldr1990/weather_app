@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   stream_transform: ^2.0.0
   firebase_auth: ^3.3.19
+  google_fonts: ^3.0.0
 
 dev_dependencies:
   flutter_test:
