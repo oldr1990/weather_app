@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:weather_app/pages/auth_page/auth_cubit.dart';
+import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -18,20 +22,12 @@ class _AuthScreenState extends State<AuthScreen> {
     super.initState();
     _emailController.addListener(() {
       setState(() {
-        if (_invalidEmail && _emailController.text.isNotEmpty) {
-          validateEmail();
-        } else if (_emailController.text.isEmpty) {
-          _invalidEmail = false;
-        }
+        _invalidEmail = false;
       });
     });
     _passwordController.addListener(() {
       setState(() {
-        if (_invalidPassword && _passwordController.text.isNotEmpty) {
-          validatePassword();
-        } else if (_passwordController.text.isEmpty) {
-          _invalidPassword = false;
-        }
+        _invalidPassword = false;
       });
     });
   }
@@ -72,17 +68,38 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BlocListener<AuthCubit, AuthState>(listener: (context, state) {
+      switch (state.status) {
+        case AuthStatus.success:
+          context.loaderOverlay.hide();
+          showError('Success');
+          break;
+        case AuthStatus.initial:
+          context.loaderOverlay.hide();
+          break;
+        case AuthStatus.failure:
+          context.loaderOverlay.hide();
+          showError(state.errorMessage);
+          break;
+        case AuthStatus.loading:
+          context.loaderOverlay.show();
+          break;
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Вход',
-          style: Theme.of(context).textTheme.headLiine1,
+          style: Theme.of(context).textTheme.headline1,
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Card(
-          elevation: 4.0,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          elevation: 8.0,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -110,20 +127,22 @@ class _AuthScreenState extends State<AuthScreen> {
                     Icons.password,
                     color: Colors.white,
                   ),
-                  const SizedBox(height: 16),
-                  TextButton(
-              style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsets>(
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black12)),
-              child: Text(
-                "Регистрация",
-                style: MovieInfoSercherTheme.darkTextTheme.headline2,
-              ) 
-                    onPressed: validateInput() ? _onPressed : null,
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                          const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16)),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.black),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.black12)),
+                  child: Text(
+                    "Регистрация",
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
+                  onPressed: validateInput() ? _onPressed : null,
                 )
               ],
             ),
@@ -134,10 +153,10 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _onPressed() {
-    Cubit.of<AuthCubit>(context).register(
-      _emailController.text,
-      _passwordController.text,
-    );
+    context.read<AuthCubit>().register(
+          _emailController.text,
+          _passwordController.text,
+        );
   }
 
   Widget buildEditText(String label, TextEditingController controller,
@@ -163,5 +182,16 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     ]);
+  }
+
+  void showError(String? message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        message ?? "Unexpected Error",
+        style: const TextStyle(color: Colors.white, fontSize: 20),
+      ),
+      backgroundColor: Colors.black38,
+      duration: const Duration(seconds: 2),
+    ));
   }
 }

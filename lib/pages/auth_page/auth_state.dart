@@ -1,6 +1,6 @@
 part of 'auth_cubit.dart';
 
-enum AuthStatus { initial, success, failure }
+enum AuthStatus { initial, success, failure, loading }
 
 class AuthState {
   final AuthStatus status;
