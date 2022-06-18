@@ -4,18 +4,20 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/network/model_response.dart';
 
+import '../models/user_data.dart';
+
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<Result<User>> authorize(String email, String password) async {
+  Future<Result<UserData>> authorize(UserData data) async {
     try {
       final result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+          email: data.email, password: data.password);
       log(result.user.toString());
       if (result.user != null) {
-        return Success<User>(result.user!);
+        return Success<UserData>(data);
       } else {
-        return Error<User>('Something went wrong');
+        return Error<UserData>('Something went wrong');
       }
     } catch (e) {
       log(e.toString());
@@ -23,15 +25,15 @@ class FirebaseAuthService {
     }
   }
 
-  Future<Result<User>> register(String email, String password) async {
+  Future<Result<UserData>> register(UserData data) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+          email: data.email, password: data.password);
       log(result.user.toString());
       if (result.user != null) {
-        return Success<User>(result.user!);
+        return Success<UserData>(data);
       } else {
-        return Error<User>('Something went wrong');
+        return Error<UserData>('Something went wrong');
       }
     } catch (e) {
       return Error(e.toString());

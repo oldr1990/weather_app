@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:weather_app/models/device_type.dart';
+
 class Device {
   String id;
   String name;
@@ -8,6 +10,12 @@ class Device {
   String type;
   String buttery;
   String userId;
+
+  DeviceType deviceType() {
+    return DeviceType.values
+        .firstWhere((element) => element.toString() == type);
+  }
+
   Device({
     required this.id,
     required this.name,

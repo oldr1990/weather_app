@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
+import 'package:weather_app/pages/home_page/home_screen.dart';
 import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -20,6 +22,8 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     super.initState();
+    _emailController.text = '';
+    _passwordController.text = '';
     _emailController.addListener(() {
       setState(() {
         _invalidEmail = false;
@@ -37,7 +41,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   bool validateEmail() {
-    bool valid = isValideEmail();
+    bool valid = isValidEmail();
     _invalidEmail = !valid;
     return valid;
   }
@@ -48,7 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return valid;
   }
 
-  bool isValideEmail() {
+  bool isValidEmail() {
     return RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(_emailController.text);
@@ -72,10 +76,11 @@ class _AuthScreenState extends State<AuthScreen> {
       switch (state.status) {
         case AuthStatus.success:
           context.loaderOverlay.hide();
-          showError('Success');
+          Navigator.pushReplacementNamed(context, HomeScreen.route);
           break;
         case AuthStatus.initial:
           context.loaderOverlay.hide();
+          context.read<AuthCubit>().readUserData();
           break;
         case AuthStatus.failure:
           context.loaderOverlay.hide();
@@ -84,10 +89,14 @@ class _AuthScreenState extends State<AuthScreen> {
         case AuthStatus.loading:
           context.loaderOverlay.show();
           break;
+        case AuthStatus.normal:
+          context.loaderOverlay.show();
+          break;
       }
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Вход',
@@ -95,7 +104,7 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
@@ -105,7 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Вход'),
+                Text('Вход', style: Theme.of(context).textTheme.headline2),
                 const SizedBox(height: 16),
                 buildEditText(
                   'Email',
@@ -116,6 +125,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     Icons.email,
                     color: Colors.white,
                   ),
+                  isLast: false,
                 ),
                 const SizedBox(height: 16),
                 buildEditText(
@@ -129,20 +139,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextButton(
-                  style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16)),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black12)),
-                  child: Text(
-                    "Регистрация",
-                    style: Theme.of(context).textTheme.headline2,
-                  ),
-                  onPressed: validateInput() ? _onPressed : null,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildButton('Вход', _login),
+                    const SizedBox(width: 8),
+                    _buildButton('Регистрация', _register),
+                  ],
                 )
               ],
             ),
@@ -152,15 +156,47 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  void _onPressed() {
-    context.read<AuthCubit>().register(
-          _emailController.text,
-          _passwordController.text,
-        );
+  void _register() {
+    if (validateInput()) {
+      context.read<AuthCubit>().register(_getUserData());
+    } else {
+      showError('Не корректный ввод.');
+    }
+  }
+
+  UserData _getUserData() {
+    return UserData(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+  }
+
+  void _login() {
+    if (validateInput()) {
+      context.read<AuthCubit>().login(_getUserData());
+    } else {
+      showError('Не корректный ввод.');
+    }
+  }
+
+  Widget _buildButton(String text, VoidCallback onPressed) {
+    return TextButton(
+      style: ButtonStyle(
+          padding: MaterialStateProperty.all<EdgeInsets>(
+              const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.black12)),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.headline2,
+      ),
+      onPressed: onPressed,
+    );
   }
 
   Widget buildEditText(String label, TextEditingController controller,
-      bool validated, String errorMessage, Widget icon) {
+      bool validated, String errorMessage, Widget icon,
+      {bool isLast = true}) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
         padding: const EdgeInsets.only(bottom: 16.0, right: 8.0),
@@ -178,7 +214,7 @@ class _AuthScreenState extends State<AuthScreen> {
               borderSide: BorderSide(color: Colors.white),
             ),
           ),
-          textInputAction: TextInputAction.next,
+          textInputAction: isLast ? TextInputAction.done : TextInputAction.next,
         ),
       ),
     ]);

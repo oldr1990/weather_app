@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:weather_app/models/ds18b20.dart';
 import 'package:weather_app/network/model_response.dart';
 
 import '../models/device.dart';
