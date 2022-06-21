@@ -5,7 +5,6 @@ import 'package:weather_app/components/button_component.dart';
 import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
 import 'package:weather_app/pages/home_page/home_page.dart';
-import 'package:weather_app/pages/home_page/home_screen.dart';
 import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -128,19 +127,20 @@ class _AuthScreenState extends State<AuthScreen> {
                       Icons.email,
                       color: Colors.white,
                     ),
+                    false,
                     isLast: false,
                   ),
                   const SizedBox(height: 16),
                   buildEditText(
-                    'Пароль',
-                    _passwordController,
-                    _invalidPassword,
-                    'Не корректный пароль.',
-                    const Icon(
-                      Icons.password,
-                      color: Colors.white,
-                    ),
-                  ),
+                      'Пароль',
+                      _passwordController,
+                      _invalidPassword,
+                      'Не корректный пароль.',
+                      const Icon(
+                        Icons.password,
+                        color: Colors.white,
+                      ),
+                      true),
                   const SizedBox(height: 16),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,7 +185,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget buildEditText(String label, TextEditingController controller,
-      bool validated, String errorMessage, Widget icon,
+      bool validated, String errorMessage, Widget icon, bool isPassword,
       {bool isLast = true}) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
@@ -194,6 +194,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       Expanded(
         child: TextField(
+          obscureText: isPassword,
           maxLines: 1,
           maxLength: 20,
           controller: controller,

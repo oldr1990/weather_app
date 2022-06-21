@@ -12,8 +12,12 @@ class Device {
   String userId;
 
   DeviceType deviceType() {
-    return DeviceType.values
-        .firstWhere((element) => element.toString() == type);
+    switch (type) {
+      case 'ds18b20':
+        return DeviceType.ds18b20;
+      default:
+        return DeviceType.unknown;
+    }
   }
 
   Device({
@@ -54,9 +58,9 @@ class Device {
     };
   }
 
-  factory Device.fromMap(Map<String, dynamic> map) {
+  factory Device.fromMap(Map<String, dynamic> map, String id) {
     return Device(
-      id: map['id'] as String,
+      id: id,
       name: map['name'] as String,
       description: map['description'] as String,
       type: map['type'] as String,
@@ -66,9 +70,6 @@ class Device {
   }
 
   String toJson() => json.encode(toMap());
-
-  factory Device.fromJson(String source) =>
-      Device.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

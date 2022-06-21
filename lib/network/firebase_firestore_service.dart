@@ -19,7 +19,7 @@ class FirebaseFirestoreService {
           .where('userId', isEqualTo: userID)
           .get();
       final devices =
-          result.docs.map((doc) => Device.fromMap(doc.data())).toList();
+          result.docs.map((doc) => Device.fromMap(doc.data(), doc.id)).toList();
       return Success(devices);
     } on SocketException {
       return Error("Please, check your internet connection and try again.");
