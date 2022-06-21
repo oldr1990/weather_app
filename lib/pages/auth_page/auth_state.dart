@@ -1,19 +1,19 @@
 part of 'auth_cubit.dart';
 
-enum  AuthStatus{initial, success, failure}
+enum AuthStatus { initial, success, failure, loading }
 
 class AuthState {
- final AuthStatus status;
- final String errorMessage;
+  final AuthStatus status;
+  final String errorMessage;
 
 //<editor-fold desc="Data Methods">
 
- const AuthState({
-     this.status = AuthStatus.initial,
-     this.errorMessage = '',
+  const AuthState({
+    this.status = AuthStatus.initial,
+    this.errorMessage = '',
   });
 
- @override
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AuthState &&
@@ -21,18 +21,15 @@ class AuthState {
           status == other.status &&
           errorMessage == other.errorMessage);
 
- @override
+  @override
   int get hashCode => status.hashCode ^ errorMessage.hashCode;
 
- @override
+  @override
   String toString() {
-    return 'AuthState{' +
-        ' status: $status,' +
-        ' errorMessage: $errorMessage,' +
-        '}';
+    return 'AuthState{' ' status: $status,' ' errorMessage: $errorMessage,' '}';
   }
 
- AuthState copyWith({
+  AuthState copyWith({
     AuthStatus? status,
     String? errorMessage,
   }) {
@@ -42,10 +39,10 @@ class AuthState {
     );
   }
 
- Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap() {
     return {
-      'status': this.status,
-      'errorMessage': this.errorMessage,
+      'status': status,
+      'errorMessage': errorMessage,
     };
   }
 
