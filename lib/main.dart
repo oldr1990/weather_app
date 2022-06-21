@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:weather_app/pages/auth_page/auth_page.dart';
+import 'package:weather_app/pages/home_page/home_page.dart';
+import 'package:weather_app/pages/home_page/home_screen.dart';
 import 'package:weather_app/settings/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         routes: {
           AuthPage.route: (context) => const AuthPage(),
+          HomePage.route: (context) => const HomePage(),
         },
         theme: WeatherAppTheme.dark(),
         home: const AuthPage(),

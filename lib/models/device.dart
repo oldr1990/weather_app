@@ -1,13 +1,21 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:weather_app/models/device_type.dart';
+
 class Device {
   String id;
   String name;
   String description;
   String type;
-  String buttery;
+  int buttery;
   String userId;
+
+  DeviceType deviceType() {
+    return DeviceType.values
+        .firstWhere((element) => element.toString() == type);
+  }
+
   Device({
     required this.id,
     required this.name,
@@ -22,7 +30,7 @@ class Device {
     String? name,
     String? description,
     String? type,
-    String? buttery,
+    int? buttery,
     String? userId,
   }) {
     return Device(
@@ -52,7 +60,7 @@ class Device {
       name: map['name'] as String,
       description: map['description'] as String,
       type: map['type'] as String,
-      buttery: map['buttery'] as String,
+      buttery: map['buttery'] as int,
       userId: map['userId'] as String,
     );
   }
