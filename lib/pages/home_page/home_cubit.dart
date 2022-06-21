@@ -15,11 +15,7 @@ class HomeCubit extends Cubit<HomeState> {
     Result<List<Device>> result = await firebaseService.getDevices();
     if (result is Success) {
       result as Success<List<Device>>;
-      if (result.value.isEmpty) {
-        emit(HomeEmpty());
-      } else {
-        emit(HomeSuccess(result.value));
-      }
+      emit(HomeSuccess(result.value));
     } else {
       result as Error<List<Device>>;
       emit(HomeFailure(errorMessage: result.errorMessage));

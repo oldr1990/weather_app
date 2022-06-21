@@ -11,3 +11,6 @@ class Error<T> extends Result<T> {
 
   Error(this.errorMessage);
 }
+
+//Todo: Add more error handling
+enum ErrorType { network, server, unknown }

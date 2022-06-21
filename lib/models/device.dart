@@ -8,7 +8,7 @@ class Device {
   String name;
   String description;
   String type;
-  String buttery;
+  int buttery;
   String userId;
 
   DeviceType deviceType() {
@@ -30,7 +30,7 @@ class Device {
     String? name,
     String? description,
     String? type,
-    String? buttery,
+    int? buttery,
     String? userId,
   }) {
     return Device(
@@ -60,7 +60,7 @@ class Device {
       name: map['name'] as String,
       description: map['description'] as String,
       type: map['type'] as String,
-      buttery: map['buttery'] as String,
+      buttery: map['buttery'] as int,
       userId: map['userId'] as String,
     );
   }

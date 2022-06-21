@@ -3,7 +3,7 @@ import 'package:weather_app/models/device.dart';
 import 'package:weather_app/models/device_type.dart';
 
 class DeviceComponent extends StatefulWidget {
-  final Function onTap;
+  final VoidCallback onTap;
   final Device device;
   const DeviceComponent({Key? key, required this.onTap, required this.device})
       : super(key: key);
@@ -16,7 +16,7 @@ class _DeviceComponentState extends State<DeviceComponent> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => {widget.onTap},
+        onTap: widget.onTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(

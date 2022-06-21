@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
+import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/network/model_response.dart';
@@ -19,6 +21,10 @@ class FirebaseAuthService {
       } else {
         return Error<UserData>('Something went wrong');
       }
+    } on SocketException {
+      return Error("Please, check your internet connection and try again.");
+    } on TimeoutException {
+      return Error("Server not responding!");
     } catch (e) {
       log(e.toString());
       return Error(e.toString());
@@ -35,6 +41,10 @@ class FirebaseAuthService {
       } else {
         return Error<UserData>('Something went wrong');
       }
+    } on SocketException {
+      return Error("Please, check your internet connection and try again.");
+    } on TimeoutException {
+      return Error("Server not responding!");
     } catch (e) {
       return Error(e.toString());
     }
@@ -44,6 +54,10 @@ class FirebaseAuthService {
     try {
       await _auth.signOut();
       return Success(true);
+    } on SocketException {
+      return Error("Please, check your internet connection and try again.");
+    } on TimeoutException {
+      return Error("Server not responding!");
     } catch (e) {
       return Error(e.toString());
     }

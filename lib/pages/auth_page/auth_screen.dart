@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:weather_app/components/button_component.dart';
 import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
+import 'package:weather_app/pages/home_page/home_page.dart';
 import 'package:weather_app/pages/home_page/home_screen.dart';
 import 'auth_cubit.dart';
 
@@ -24,6 +26,7 @@ class _AuthScreenState extends State<AuthScreen> {
     super.initState();
     _emailController.text = '';
     _passwordController.text = '';
+    context.read<AuthCubit>().readUserData();
     _emailController.addListener(() {
       setState(() {
         _invalidEmail = false;
@@ -72,83 +75,85 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    BlocListener<AuthCubit, AuthState>(listener: (context, state) {
-      switch (state.status) {
-        case AuthStatus.success:
-          context.loaderOverlay.hide();
-          Navigator.pushReplacementNamed(context, HomeScreen.route);
-          break;
-        case AuthStatus.initial:
-          context.loaderOverlay.hide();
-          context.read<AuthCubit>().readUserData();
-          break;
-        case AuthStatus.failure:
-          context.loaderOverlay.hide();
-          showError(state.errorMessage);
-          break;
-        case AuthStatus.loading:
-          context.loaderOverlay.show();
-          break;
-        case AuthStatus.normal:
-          context.loaderOverlay.show();
-          break;
-      }
-    });
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(
-          'Вход',
-          style: Theme.of(context).textTheme.headline1,
+    return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (previous, current) => true,
+      listener: (context, state) {
+        switch (state.status) {
+          case AuthStatus.success:
+            context.loaderOverlay.hide();
+            Navigator.pushReplacementNamed(context, HomePage.route);
+            break;
+          case AuthStatus.initial:
+            context.loaderOverlay.hide();
+            break;
+          case AuthStatus.failure:
+            context.loaderOverlay.hide();
+            showError(state.errorMessage);
+            break;
+          case AuthStatus.loading:
+            context.loaderOverlay.show();
+            break;
+          case AuthStatus.normal:
+            context.loaderOverlay.show();
+            break;
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text(
+            'Вход',
+            style: Theme.of(context).textTheme.headline2,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          elevation: 8.0,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Вход', style: Theme.of(context).textTheme.headline2),
-                const SizedBox(height: 16),
-                buildEditText(
-                  'Email',
-                  _emailController,
-                  _invalidEmail,
-                  'Не корректный Email.',
-                  const Icon(
-                    Icons.email,
-                    color: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          child: Card(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            elevation: 8.0,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Вход', style: Theme.of(context).textTheme.headline2),
+                  const SizedBox(height: 16),
+                  buildEditText(
+                    'Email',
+                    _emailController,
+                    _invalidEmail,
+                    'Не корректный Email.',
+                    const Icon(
+                      Icons.email,
+                      color: Colors.white,
+                    ),
+                    isLast: false,
                   ),
-                  isLast: false,
-                ),
-                const SizedBox(height: 16),
-                buildEditText(
-                  'Пароль',
-                  _passwordController,
-                  _invalidPassword,
-                  'Не корректный пароль.',
-                  const Icon(
-                    Icons.password,
-                    color: Colors.white,
+                  const SizedBox(height: 16),
+                  buildEditText(
+                    'Пароль',
+                    _passwordController,
+                    _invalidPassword,
+                    'Не корректный пароль.',
+                    const Icon(
+                      Icons.password,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildButton('Вход', _login),
-                    const SizedBox(width: 8),
-                    _buildButton('Регистрация', _register),
-                  ],
-                )
-              ],
+                  const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ButtonComponent(text: 'Вход', onPressed: _login),
+                      const SizedBox(width: 8),
+                      ButtonComponent(
+                          text: 'Регистрация', onPressed: _register),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -177,21 +182,6 @@ class _AuthScreenState extends State<AuthScreen> {
     } else {
       showError('Не корректный ввод.');
     }
-  }
-
-  Widget _buildButton(String text, VoidCallback onPressed) {
-    return TextButton(
-      style: ButtonStyle(
-          padding: MaterialStateProperty.all<EdgeInsets>(
-              const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.black12)),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.headline2,
-      ),
-      onPressed: onPressed,
-    );
   }
 
   Widget buildEditText(String label, TextEditingController controller,
