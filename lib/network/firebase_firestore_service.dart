@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/models/ds18b20.dart';
 import 'package:weather_app/network/model_response.dart';
+import 'package:weather_app/network/start_request.dart';
 
 import '../models/device.dart';
 
@@ -13,21 +14,18 @@ class FirebaseFirestoreService {
   final userID = FirebaseAuth.instance.currentUser?.uid;
 
   Future<Result<List<Device>>> getDevices() async {
-    try {
-      final result = await db
-          .collection('device')
-          .where('userId', isEqualTo: userID)
-          .get();
-      final devices =
-          result.docs.map((doc) => Device.fromMap(doc.data(), doc.id)).toList();
-      return Success(devices);
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    } on TimeoutException {
-      return Error("Server not responding!");
-    } catch (e) {
-      return Error(e.toString());
-    }
+    return await Network<List<Device>>().startReqest(
+      () async {
+        final result = await db
+            .collection('device')
+            .where('userId', isEqualTo: userID)
+            .get();
+        final devices = result.docs
+            .map((doc) => Device.fromMap(doc.data(), doc.id))
+            .toList();
+        return devices;
+      },
+    );
   }
 
   Future<Result<bool>> addDevice(Device device) async {

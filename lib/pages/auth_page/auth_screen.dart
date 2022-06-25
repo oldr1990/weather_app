@@ -93,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen> {
             context.loaderOverlay.show();
             break;
           case AuthStatus.normal:
-            context.loaderOverlay.show();
+            context.loaderOverlay.hide();
             break;
         }
       },
