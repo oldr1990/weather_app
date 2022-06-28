@@ -7,10 +7,10 @@ class Success<T> extends Result<T> {
 }
 
 class Error<T> extends Result<T> {
-  final String errorMessage;
-
-  Error(this.errorMessage);
+  final String? errorMessage;
+  final ErrorType errorType;
+  Error(this.errorMessage, this.errorType);
 }
 
 //Todo: Add more error handling
-enum ErrorType { network, server, unknown }
+enum ErrorType { noInternet, loginData, userDisabled, userExist, unknown }

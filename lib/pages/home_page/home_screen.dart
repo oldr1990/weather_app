@@ -5,6 +5,8 @@ import 'package:weather_app/components/error_component.dart';
 import 'package:weather_app/models/device.dart';
 import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
 import 'package:weather_app/pages/home_page/home_cubit.dart';
+import 'package:weather_app/utils/get_error_message.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,13 +16,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AppLocalizations? _stringRes;
+
   @override
   Widget build(BuildContext context) {
+    _stringRes = AppLocalizations.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'Список устройств',
+          _stringRes!.devices,
           style: Theme.of(context).textTheme.headline2,
         ),
       ),
@@ -41,18 +46,33 @@ class _HomeScreenState extends State<HomeScreen> {
             state as HomeFailure;
             return ErrorComponent(
                 onRetry: () => {context.read<HomeCubit>().loadDevicesList()},
-                errorMessage: state.errorMessage);
+                errorMessage: state.error.getErrorMessage(context));
           }
         },
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FloatingActionButton(
+          tooltip: _stringRes!.add_device,
+          elevation: 4,
+          backgroundColor: Theme.of(context).backgroundColor,
+          onPressed: () => {
+            Navigator.pushNamed(context, EditDevicePage.route),
+          },
+          child: const Icon(
+            Icons.add,
+            size: 32,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildDeviceList(List<Device> devices) {
     return ListView.builder(
-      itemCount: devices.length + 1,
+      itemCount: devices.isEmpty ? 1 : devices.length,
       itemBuilder: (context, index) {
-        if (index < devices.length) {
+        if (devices.isNotEmpty) {
           return DeviceComponent(
               onTap: () => {
                     Navigator.pushNamed(
@@ -90,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Добавить устройство',
+                          Text(_stringRes!.add_device,
                               style: Theme.of(context).textTheme.headline2),
                         ],
                       ),
