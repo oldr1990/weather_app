@@ -13,6 +13,22 @@ class EditDeviceCubit extends Cubit<EditDeviceState> {
   Future addDevice(Device device) async {
     emit(EditDeviceLoading());
     Result<bool> result = await repository.addDevice(device);
+    _resultHandler(result);
+  }
+
+  Future updateDevice(Device device) async {
+    emit(EditDeviceLoading());
+    Result<bool> result = await repository.updateDevice(device);
+    _resultHandler(result);
+  }
+
+  Future deleteDevice(Device device) async {
+    emit(EditDeviceLoading());
+    Result<bool> result = await repository.deleteDevice(device);
+    _resultHandler(result);
+  }
+
+  void _resultHandler(Result<bool> result) {
     if (result is Success) {
       result as Success<bool>;
       emit(EditDeviceSuccess());

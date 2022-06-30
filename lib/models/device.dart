@@ -49,11 +49,9 @@ class Device {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
       'name': name,
       'description': description,
       'type': type,
-      'buttery': buttery,
       'userId': userId,
     };
   }

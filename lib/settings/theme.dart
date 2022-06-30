@@ -24,9 +24,9 @@ class WeatherAppTheme {
       color: Colors.black,
     ),
     headline6: GoogleFonts.openSans(
-      fontSize: 20.0,
-      fontWeight: FontWeight.w600,
-      color: Colors.black,
+      fontSize: 21.0,
+      fontWeight: FontWeight.w700,
+      color: Colors.red.shade900,
     ),
   );
 

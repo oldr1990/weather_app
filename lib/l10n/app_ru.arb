@@ -13,5 +13,18 @@
     "error_no_internet_connection":"Нет подключения к интернету",
 
     "devices": "Устройства",
-    "add_device": "Добавить устройство"
+    "add_device": "Добавить устройство",
+    "save": "Сохранить",
+    "add": "Добавить",
+    "delete": "Удалить",
+
+    "device_name": "Название",
+    "device_type": "Тип :",
+    "device_description": "Описание",
+    "ds18b20": "DS18B20",
+    "unknown_device": "Неизвестное устройство",
+    
+    "device_editor": "Редактор устройств",
+    "device_editor_success_message": "Устройство успешно добавлено/изменено"
+
 }

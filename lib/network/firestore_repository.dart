@@ -41,6 +41,17 @@ class FirestoreRepository {
     }
   }
 
+  Future<Result<bool>> updateDevice(Device device) async {
+    try {
+      await db.collection('device').doc(device.id).update(device.toMap());
+      return Success(true);
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
+    } catch (e) {
+      return Error(e.toString(), ErrorType.unknown);
+    }
+  }
+
   Future<Result<bool>> deleteDevice(Device device) async {
     try {
       await db.collection('device').doc(device.id).delete();
