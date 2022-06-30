@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/models/ds18b20.dart';
+import 'package:weather_app/network/error_extension_util.dart';
 import 'package:weather_app/network/model_response.dart';
 
 import '../models/device.dart';
 
-class FirebaseFirestoreService {
+class FirestoreRepository {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
 
@@ -19,14 +19,12 @@ class FirebaseFirestoreService {
           .where('userId', isEqualTo: userID)
           .get();
       final devices =
-          result.docs.map((doc) => Device.fromMap(doc.data())).toList();
+          result.docs.map((doc) => Device.fromMap(doc.data(), doc.id)).toList();
       return Success(devices);
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    } on TimeoutException {
-      return Error("Server not responding!");
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
     } catch (e) {
-      return Error(e.toString());
+      return Error<List<Device>>(e.toString(), ErrorType.unknown);
     }
   }
 
@@ -36,12 +34,21 @@ class FirebaseFirestoreService {
           .collection('device')
           .add(device.copyWith(userId: userID).toMap());
       return Success(true);
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    } on TimeoutException {
-      return Error("Server not responding!");
+    } on FirebaseException catch (e) {
+      return Error(e.message, ErrorType.unknown);
     } catch (e) {
-      return Error(e.toString());
+      return Error(e.toString(), ErrorType.unknown);
+    }
+  }
+
+  Future<Result<bool>> updateDevice(Device device) async {
+    try {
+      await db.collection('device').doc(device.id).update(device.toMap());
+      return Success(true);
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
+    } catch (e) {
+      return Error(e.toString(), ErrorType.unknown);
     }
   }
 
@@ -49,12 +56,10 @@ class FirebaseFirestoreService {
     try {
       await db.collection('device').doc(device.id).delete();
       return Success(true);
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    } on TimeoutException {
-      return Error("Server not responding!");
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
     } catch (e) {
-      return Error(e.toString());
+      return Error(e.toString(), ErrorType.unknown);
     }
   }
 
@@ -68,12 +73,10 @@ class FirebaseFirestoreService {
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
       return Success(data);
-    } on SocketException {
-      return Error("Please, check your internet connection and try again.");
-    } on TimeoutException {
-      return Error("Server not responding!");
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
     } catch (e) {
-      return Error(e.toString());
+      return Error(e.toString(), ErrorType.unknown);
     }
   }
 }

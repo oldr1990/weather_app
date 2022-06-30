@@ -14,7 +14,7 @@ class HomeSuccess extends HomeState {
 class HomeLoading extends HomeState {}
 
 class HomeFailure extends HomeState {
-  final String errorMessage;
+  final Error error;
 
-  HomeFailure({required this.errorMessage});
+  HomeFailure({required this.error});
 }

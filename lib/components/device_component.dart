@@ -20,27 +20,27 @@ class _DeviceComponentState extends State<DeviceComponent> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(
-            child: Row(
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _buildIcon(widget.device.deviceType())),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(widget.device.name,
-                            style: Theme.of(context).textTheme.headline2),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  _buildIcon(widget.device.deviceType()),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.device.name,
+                              style: Theme.of(context).textTheme.headline2),
+                          Text(widget.device.description,
+                              style: Theme.of(context).textTheme.bodyText1),
+                        ],
                       ),
-                      Expanded(
-                          child: Text(widget.device.description,
-                              style: Theme.of(context).textTheme.bodyText1)),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ));
@@ -52,6 +52,13 @@ class _DeviceComponentState extends State<DeviceComponent> {
         return const Icon(
           Icons.thermostat,
           color: Colors.amber,
+          size: 40,
+        );
+      case DeviceType.unknown:
+        return const Icon(
+          Icons.device_unknown,
+          color: Colors.grey,
+          size: 40,
         );
     }
   }

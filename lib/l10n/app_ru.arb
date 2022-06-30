@@ -1,0 +1,30 @@
+{
+    "login": "Вход",
+    "registration": "Регистрация",
+    "invalid_input_email": "Неверный email",
+    "invalid_input_password": "Неверный пароль",
+    "email": "Email",
+    "password": "Пароль",
+    "invalid_input": "Неверный ввод",
+    "unexpected_error":"Что-то пошло не так",
+    "error_user_disabled":"Пользователь заблокирован",
+    "error_user_not_found":"Пользователь не найден",
+    "error_user_exists":"Пользователь уже существует",
+    "error_no_internet_connection":"Нет подключения к интернету",
+
+    "devices": "Устройства",
+    "add_device": "Добавить устройство",
+    "save": "Сохранить",
+    "add": "Добавить",
+    "delete": "Удалить",
+
+    "device_name": "Название",
+    "device_type": "Тип :",
+    "device_description": "Описание",
+    "ds18b20": "DS18B20",
+    "unknown_device": "Неизвестное устройство",
+    
+    "device_editor": "Редактор устройств",
+    "device_editor_success_message": "Устройство успешно добавлено/изменено"
+
+}

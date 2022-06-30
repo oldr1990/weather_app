@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:weather_app/components/button_component.dart';
+import 'package:weather_app/components/snackbar_component.dart';
 import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
 import 'package:weather_app/pages/home_page/home_page.dart';
-import 'package:weather_app/pages/home_page/home_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weather_app/utils/get_error_message.dart';
 import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -20,6 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   bool _invalidEmail = false;
   bool _invalidPassword = false;
+  AppLocalizations? stringRes;
 
   @override
   void initState() {
@@ -75,27 +78,20 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    stringRes = AppLocalizations.of(context);
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (previous, current) => true,
       listener: (context, state) {
-        switch (state.status) {
-          case AuthStatus.success:
-            context.loaderOverlay.hide();
-            Navigator.pushReplacementNamed(context, HomePage.route);
-            break;
-          case AuthStatus.initial:
-            context.loaderOverlay.hide();
-            break;
-          case AuthStatus.failure:
-            context.loaderOverlay.hide();
-            showError(state.errorMessage);
-            break;
-          case AuthStatus.loading:
-            context.loaderOverlay.show();
-            break;
-          case AuthStatus.normal:
-            context.loaderOverlay.show();
-            break;
+        if (state is AuthSuccess) {
+          context.loaderOverlay.hide();
+          Navigator.pushReplacementNamed(context, HomePage.route);
+        } else if (state is AuthError) {
+          context.loaderOverlay.hide();
+          showSnackbar(context, (state.error.getErrorMessage(context)));
+        } else if (state is AuthLoading) {
+          context.loaderOverlay.show();
+        } else {
+          context.loaderOverlay.hide();
         }
       },
       child: Scaffold(
@@ -117,39 +113,42 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Вход', style: Theme.of(context).textTheme.headline2),
+                  Text(stringRes!.login,
+                      style: Theme.of(context).textTheme.headline2),
                   const SizedBox(height: 16),
                   buildEditText(
-                    'Email',
+                    stringRes!.email,
                     _emailController,
                     _invalidEmail,
-                    'Не корректный Email.',
+                    stringRes!.invalid_input_email,
                     const Icon(
                       Icons.email,
                       color: Colors.white,
                     ),
+                    false,
                     isLast: false,
                   ),
                   const SizedBox(height: 16),
                   buildEditText(
-                    'Пароль',
-                    _passwordController,
-                    _invalidPassword,
-                    'Не корректный пароль.',
-                    const Icon(
-                      Icons.password,
-                      color: Colors.white,
-                    ),
-                  ),
+                      stringRes!.password,
+                      _passwordController,
+                      _invalidPassword,
+                      stringRes!.invalid_input_password,
+                      const Icon(
+                        Icons.password,
+                        color: Colors.white,
+                      ),
+                      true),
                   const SizedBox(height: 16),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ButtonComponent(text: 'Вход', onPressed: _login),
+                      ButtonComponent(
+                          text: stringRes!.login, onPressed: _login),
                       const SizedBox(width: 8),
                       ButtonComponent(
-                          text: 'Регистрация', onPressed: _register),
+                          text: stringRes!.registration, onPressed: _register),
                     ],
                   )
                 ],
@@ -165,7 +164,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (validateInput()) {
       context.read<AuthCubit>().register(_getUserData());
     } else {
-      showError('Не корректный ввод.');
+      showSnackbar(context, stringRes!.invalid_input);
     }
   }
 
@@ -180,12 +179,12 @@ class _AuthScreenState extends State<AuthScreen> {
     if (validateInput()) {
       context.read<AuthCubit>().login(_getUserData());
     } else {
-      showError('Не корректный ввод.');
+      showSnackbar(context, stringRes!.invalid_input);
     }
   }
 
   Widget buildEditText(String label, TextEditingController controller,
-      bool validated, String errorMessage, Widget icon,
+      bool validated, String errorMessage, Widget icon, bool isPassword,
       {bool isLast = true}) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
@@ -194,6 +193,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       Expanded(
         child: TextField(
+          obscureText: isPassword,
           maxLines: 1,
           maxLength: 20,
           controller: controller,
@@ -208,16 +208,5 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     ]);
-  }
-
-  void showError(String? message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        message ?? "Unexpected Error",
-        style: const TextStyle(color: Colors.white, fontSize: 20),
-      ),
-      backgroundColor: Colors.black38,
-      duration: const Duration(seconds: 2),
-    ));
   }
 }
