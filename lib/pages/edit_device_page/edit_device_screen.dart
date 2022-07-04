@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:weather_app/components/button_component.dart';
+import 'package:weather_app/components/components.dart';
 import 'package:weather_app/models/device.dart';
 import 'package:weather_app/models/device_type.dart';
 import 'package:weather_app/pages/edit_device_page/edit_device_cubit.dart';
@@ -63,6 +63,12 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               _stringRes!.device_editor,
               style: Theme.of(context).textTheme.headline2,
             ),
+            actions: _oldDevice == null ? null : <Widget>[
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: _onDeletePressed,
+              )
+            ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(16),
@@ -70,8 +76,6 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_oldDevice != null) const SizedBox(height: 16),
-                _deleteRow(),
                 const SizedBox(height: 16),
                 _buildEditText(
                     _stringRes!.device_name, _nameController, false, 20, false),
@@ -86,47 +90,11 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
                       text: _oldDevice == null
                           ? _stringRes!.add
                           : _stringRes!.save,
-                      onPressed: _onButtonPressed),
+                      onPressed: _onSavePressed),
                 ),
               ],
             ),
           )),
-    );
-  }
-
-  Widget _deleteRow() {
-    if (_oldDevice == null) {
-      return Container();
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () {
-            _onDeletePressed();
-          },
-          child: Container(
-            padding: const EdgeInsets.only(top: 4, bottom: 4, right: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.red),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: _onDeletePressed,
-                ),
-                Text(
-                  _stringRes!.delete,
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-      ],
     );
   }
 
@@ -192,12 +160,12 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               name: _nameController.text,
               description: _descriptionController.text,
               type: _deviceType.name,
-              buttery: 0,
+              buttery: 100,
               userId: ''),
         );
   }
 
-  void _onButtonPressed() {
+  void _onSavePressed() {
     if (_oldDevice != null) {
       context.read<EditDeviceCubit>().updateDevice(
             _oldDevice!.copyWith(

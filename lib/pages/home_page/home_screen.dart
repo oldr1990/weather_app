@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/components/device_component.dart';
-import 'package:weather_app/components/error_component.dart';
+import 'package:weather_app/components/components.dart';
 import 'package:weather_app/models/device.dart';
 import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
 import 'package:weather_app/pages/home_page/home_cubit.dart';
@@ -50,21 +49,23 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FloatingActionButton(
-          tooltip: _stringRes!.add_device,
-          elevation: 4,
-          backgroundColor: Theme.of(context).backgroundColor,
-          onPressed: () => {
-            Navigator.pushNamed(context, EditDevicePage.route),
-          },
-          child: const Icon(
-            Icons.add,
-            size: 32,
-          ),
-        ),
-      ),
+      floatingActionButton: context.read<HomeCubit>().state is! HomeSuccess
+          ? null
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FloatingActionButton(
+                tooltip: _stringRes!.add_device,
+                elevation: 4,
+                backgroundColor: Theme.of(context).backgroundColor,
+                onPressed: () => {
+                  _navigateToEditPage(context, null),
+                },
+                child: const Icon(
+                  Icons.add,
+                  size: 32,
+                ),
+              ),
+            ),
     );
   }
 
@@ -74,19 +75,25 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         if (devices.isNotEmpty) {
           return DeviceComponent(
-              onTap: () => {
-                    Navigator.pushNamed(
-                      context,
-                      EditDevicePage.route,
-                      arguments: devices[index],
-                    ),
-                  },
+              onTap: () => {_navigateToEditPage(context, devices[index])},
               device: devices[index]);
         } else {
           return _buildAddDevice();
         }
       },
     );
+  }
+
+  Future<void> _navigateToEditPage(BuildContext context, Device? device) async {
+    final result = await Navigator.pushNamed(
+      context,
+      EditDevicePage.route,
+      arguments: device,
+    );
+    if (result != null && result is String) {
+      showSnackbar(context, result);
+    }
+    context.read<HomeCubit>().loadDevicesList();
   }
 
   Widget _buildAddDevice() {
