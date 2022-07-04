@@ -75,7 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         if (devices.isNotEmpty) {
           return DeviceComponent(
-              onTap: () => {_navigateToEditPage(context, devices[index])},
+              onTap: () => {},
+              editTap: () => {_navigateToEditPage(context, devices[index])},
               device: devices[index]);
         } else {
           return _buildAddDevice();
