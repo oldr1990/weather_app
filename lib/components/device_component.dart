@@ -59,15 +59,21 @@ class _DeviceComponentState extends State<DeviceComponent> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            _buildIcon(widget.device.deviceType()),
-            const SizedBox(width: 8),
-            Text(
-              widget.device.name,
-              style: Theme.of(context).textTheme.headline2,
-            ),
-          ],
+        Flexible(
+          child: Row(
+            children: [
+              _buildIcon(widget.device.deviceType()),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  widget.device.name,
+                  style: Theme.of(context).textTheme.headline2,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
         ),
         IconButton(
           icon: const Icon(
