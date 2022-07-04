@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:weather_app/pages/auth_page/auth_page.dart';
-import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
-import 'package:weather_app/pages/home_page/home_page.dart';
 import 'package:weather_app/settings/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,11 +40,7 @@ class MyApp extends StatelessWidget {
           locale,
         ],
         localizationsDelegates: localizationsDelegates2,
-        routes: {
-          AuthPage.route: (context) => const AuthPage(),
-          HomePage.route: (context) => const HomePage(),
-          EditDevicePage.route: (context) => const EditDevicePage(),
-        },
+        routes: navigationRoutes,
         theme: WeatherAppTheme.dark(),
         home: const AuthPage(),
       ),
