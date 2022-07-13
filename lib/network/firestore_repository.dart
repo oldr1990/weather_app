@@ -65,11 +65,8 @@ class FirestoreRepository {
 
   Future<Result<List<Ds18b20>>> getDs18b20(Device device) async {
     try {
-      final result = await db
-          .collection('ds18b20/${device.id}')
-          .orderBy('time')
-          .limit(20)
-          .get();
+      final result =
+          await db.collection('ds18b20').orderBy('time').limit(20).get();
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
       return Success(data);

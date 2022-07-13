@@ -7,7 +7,7 @@ import 'package:weather_app/network/model_response.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeInitial());
+  HomeCubit() : super(HomeLoading());
   final FirestoreRepository repository = FirestoreRepository();
 
   Future loadDevicesList() async {

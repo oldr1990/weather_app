@@ -31,23 +31,21 @@ class _DeviceComponentState extends State<DeviceComponent> {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildNameRow(),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.device.description,
-                        style: Theme.of(context).textTheme.bodyText1,
-                        textAlign: TextAlign.justify,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildIdRow(),
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildNameRow(),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.device.description,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      textAlign: TextAlign.justify,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildIdRow(),
+                  ],
                 ),
               ),
             ),

@@ -44,7 +44,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
     return BlocListener<EditDeviceCubit, EditDeviceState>(
       listenWhen: (previous, current) => true,
       listener: (context, state) {
-        if (state is EditDeviceInitial) {
+        if (state is EditDeviceNormal) {
           context.loaderOverlay.hide();
         } else if (state is EditDeviceSuccess) {
           context.loaderOverlay.hide();
@@ -63,12 +63,14 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               _stringRes!.device_editor,
               style: Theme.of(context).textTheme.headline2,
             ),
-            actions: _oldDevice == null ? null : <Widget>[
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: _onDeletePressed,
-              )
-            ],
+            actions: _oldDevice == null
+                ? null
+                : <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: _onDeletePressed,
+                    )
+                  ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(16),
@@ -106,17 +108,20 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
           style: Theme.of(context).textTheme.headline2,
         ),
         const SizedBox(width: 16),
-        DropdownButton<DeviceType>(
-            style: Theme.of(context).textTheme.headline2,
-            value: _deviceType,
-            items: _buildDeviceTypeDropdownItems(),
-            onChanged: _oldDevice != null
-                ? null
-                : (type) => {
-                      setState(() {
-                        _deviceType = type!;
-                      })
-                    }),
+        Expanded(
+          child: DropdownButton<DeviceType>(
+              isExpanded: true,
+              style: Theme.of(context).textTheme.headline2,
+              value: _deviceType,
+              items: _buildDeviceTypeDropdownItems(),
+              onChanged: _oldDevice != null
+                  ? null
+                  : (type) => {
+                        setState(() {
+                          _deviceType = type!;
+                        })
+                      }),
+        ),
       ],
     );
   }
@@ -133,7 +138,10 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
         value: type,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(name, style: Theme.of(context).textTheme.headline2),
+          child: Text(
+            name,
+            style: Theme.of(context).textTheme.headline3,
+          ),
         ));
   }
 
