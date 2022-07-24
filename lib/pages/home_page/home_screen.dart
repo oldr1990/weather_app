@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    context.read<HomeCubit>().loadDevicesList();
+    refresh();
     super.initState();
   }
 
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             state as HomeFailure;
             return ErrorComponent(
-                onRetry: () => {context.read<HomeCubit>().loadDevicesList()},
+                onRetry: refresh,
                 errorMessage: state.error.getErrorMessage(context));
           }
         },
@@ -71,19 +71,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future refresh() async {
+    context.read<HomeCubit>().loadDevicesList();
+  }
+
   Widget _buildDeviceList(List<Device> devices) {
-    return ListView.builder(
-      itemCount: devices.isEmpty ? 1 : devices.length,
-      itemBuilder: (context, index) {
-        if (devices.isNotEmpty) {
-          return DeviceComponent(
-              onTap: () => {_navigateToDeviceData(devices[index])},
-              editTap: () => {_navigateToEditPage(context, devices[index])},
-              device: devices[index]);
-        } else {
-          return _buildAddDevice();
-        }
-      },
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: ListView.builder(
+        itemCount: devices.isEmpty ? 1 : devices.length,
+        itemBuilder: (context, index) {
+          if (devices.isNotEmpty) {
+            return DeviceComponent(
+                onTap: () => {_navigateToDeviceData(devices[index])},
+                editTap: () => {_navigateToEditPage(context, devices[index])},
+                device: devices[index]);
+          } else {
+            return _buildAddDevice();
+          }
+        },
+      ),
     );
   }
 
@@ -106,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null && result is String) {
       showSnackbar(context, result);
     }
-    context.read<HomeCubit>().loadDevicesList();
+   refresh();
   }
 
   Widget _buildAddDevice() {

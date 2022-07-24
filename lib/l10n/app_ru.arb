@@ -26,6 +26,12 @@
     "unknown_device": "Неизвестное устройство",
     
     "device_editor": "Редактор устройств",
-    "device_editor_success_message": "Устройство успешно добавлено/изменено"
+    "device_editor_success_message": "Устройство успешно добавлено/изменено",
+    
+    "showed_time_range": "Показано за период:",
+    "load_more": "Загрузить еще",
+    "temperature": "Температура",
+    "humidity": "Влажность",
+    "pressure": "Давление"
 
 }

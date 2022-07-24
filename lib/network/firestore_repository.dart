@@ -11,7 +11,7 @@ import '../models/device.dart';
 class FirestoreRepository {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
-
+  DocumentSnapshot<Object?>? _lastLoadedDs18b20;
   Future<Result<List<Device>>> getDevices() async {
     try {
       final result = await db
@@ -63,12 +63,28 @@ class FirestoreRepository {
     }
   }
 
-  Future<Result<List<Ds18b20>>> getDs18b20(Device device) async {
+  Future<Result<List<Ds18b20>>> getDs18b20(
+      Device device, bool newLoading) async {
     try {
-      final result =
-          await db.collection('ds18b20').orderBy('time').limit(20).get();
+      QuerySnapshot<Map<String, dynamic>>? result;
+      if (newLoading) {
+        _lastLoadedDs18b20 = null;
+        result = await db
+            .collection('ds18b20')
+            .orderBy('time', descending: true)
+            .limit(24)
+            .get();
+      } else {
+        result = await db
+            .collection('ds18b20')
+            .orderBy('time', descending: true)
+            .startAfterDocument(_lastLoadedDs18b20!)
+            .limit(24)
+            .get();
+      }
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
+      _lastLoadedDs18b20 = result.docs[result.docs.length - 1];
       return Success(data);
     } on FirebaseException catch (e) {
       return Error(e.message, e.getErrorType());

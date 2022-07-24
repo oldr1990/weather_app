@@ -11,14 +11,24 @@ part 'ds18b20_state.dart';
 class Ds18b20Cubit extends Cubit<Ds18b20State> {
   Ds18b20Cubit() : super(Ds18b20Loading());
   final FirestoreRepository repository = FirestoreRepository();
+  List<Ds18b20> list = <Ds18b20>[];
 
-  Future getDs18b20() async {
-    emit(Ds18b20Loading());
-    Result<List<Ds18b20>> result = await repository.getDs18b20(Device(
-        id: '', name: '', description: '', type: '', buttery: 0, userId: ''));
+  Future getDs18b20(bool firstLoading, bool needShowLoading) async {
+    if (needShowLoading) emit(Ds18b20Loading());
+    Result<List<Ds18b20>> result = await repository.getDs18b20(
+        Device(
+            id: '',
+            name: '',
+            description: '',
+            type: '',
+            buttery: 0,
+            userId: ''),
+        firstLoading);
     if (result is Success) {
       result as Success<List<Ds18b20>>;
-      emit(Ds18b20Success(result.value));
+      if (firstLoading) list.clear();
+      list.addAll(result.value);
+      emit(Ds18b20Success(list));
     } else {
       result as Error<List<Ds18b20>>;
       emit(Ds18b20Error(result));
