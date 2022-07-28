@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:weather_app/components/components.dart';
 import 'package:weather_app/models/device.dart';
 import 'package:weather_app/pages/ds18b20_page/ds18b20_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,10 +19,16 @@ class Ds18b20Screen extends StatefulWidget {
 
 class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Device? _device;
+  bool _isFirstLoading = true;
   late ZoomPanBehavior _zoomPanBehavior;
+
   @override
   void initState() {
     _zoomPanBehavior = ZoomPanBehavior(
+      enablePinching: true,
+      enableDoubleTapZooming: true,
+      zoomMode: ZoomMode.x,
+      maximumZoomLevel: 0.1,
       enablePanning: true,
     );
     context.read<Ds18b20Cubit>().getDs18b20(true, true);
@@ -65,7 +70,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
 
   Widget _buildContent(List<Ds18b20> list) {
     return RefreshIndicator(
-      onRefresh: () => context.read<Ds18b20Cubit>().getDs18b20(true, false),
+      onRefresh: _refresh,
       child: ListView.builder(
         itemCount: 1,
         itemBuilder: (BuildContext context, int index) => Padding(
@@ -80,6 +85,12 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
         ),
       ),
     );
+  }
+
+  Future _refresh() async {
+    _zoomPanBehavior.reset();
+    _isFirstLoading = true;
+    context.read<Ds18b20Cubit>().getDs18b20(true, true);
   }
 
   Widget _buildChart(List<Ds18b20> list) {
@@ -106,6 +117,9 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
             dateFormat: DateFormat('HH:mm'),
             autoScrollingDelta: 1,
             autoScrollingDeltaType: DateTimeIntervalType.hours,
+            autoScrollingMode: _isFirstLoading
+                ? AutoScrollingMode.end
+                : AutoScrollingMode.start,
             labelStyle: Theme.of(context).textTheme.headline3,
             interval: 10,
             majorTickLines: const MajorTickLines(size: 2),
@@ -126,6 +140,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   }
 
   Future _loadMore() async {
+    _isFirstLoading = false;
     context.read<Ds18b20Cubit>().getDs18b20(false, false);
   }
 
