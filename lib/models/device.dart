@@ -8,7 +8,7 @@ class Device {
   String name;
   String description;
   String type;
-  int buttery;
+  int battery;
   String userId;
 
   DeviceType deviceType() {
@@ -25,7 +25,7 @@ class Device {
     required this.name,
     required this.description,
     required this.type,
-    required this.buttery,
+    required this.battery,
     required this.userId,
   });
 
@@ -34,7 +34,7 @@ class Device {
     String? name,
     String? description,
     String? type,
-    int? buttery,
+    int? battery,
     String? userId,
   }) {
     return Device(
@@ -42,14 +42,14 @@ class Device {
       name: name ?? this.name,
       description: description ?? this.description,
       type: type ?? this.type,
-      buttery: buttery ?? this.buttery,
+      battery: battery ?? this.battery,
       userId: userId ?? this.userId,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'buttery': buttery,
+      'battery': battery,
       'name': name,
       'description': description,
       'type': type,
@@ -63,7 +63,7 @@ class Device {
       name: map['name'] as String,
       description: map['description'] as String,
       type: map['type'] as String,
-      buttery: map['buttery'] as int,
+      battery: map['battery'] as int,
       userId: map['userId'] as String,
     );
   }
@@ -72,6 +72,6 @@ class Device {
 
   @override
   String toString() {
-    return 'Device(id: $id, name: $name, description: $description, type: $type, buttery: $buttery, userId: $userId)';
+    return 'Device(id: $id, name: $name, description: $description, type: $type, buttery: $battery, userId: $userId)';
   }
 }

@@ -11,39 +11,31 @@ import 'dart:ui' as ui;
 import '../../models/ds18b20.dart';
 
 class Ds18b20Screen extends StatefulWidget {
-  const Ds18b20Screen({Key? key}) : super(key: key);
-
+  const Ds18b20Screen({Key? key, required this.device}) : super(key: key);
+  final Device device;
   @override
   State<Ds18b20Screen> createState() => _Ds18b20ScreenState();
 }
 
 class _Ds18b20ScreenState extends State<Ds18b20Screen> {
-  Device? _device;
   bool _isFirstLoading = true;
   late ZoomPanBehavior _zoomPanBehavior;
 
   @override
   void initState() {
     _zoomPanBehavior = ZoomPanBehavior(
-      enablePinching: true,
-      enableDoubleTapZooming: true,
-      zoomMode: ZoomMode.x,
-      maximumZoomLevel: 0.1,
       enablePanning: true,
     );
-    context.read<Ds18b20Cubit>().getDs18b20(true, true);
+    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true, true);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_device == null) {
-      getArgs(context);
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _device?.name ?? '',
+          widget.device.id,
           overflow: TextOverflow.ellipsis,
         ),
       ),
@@ -65,9 +57,6 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     );
   }
 
-  Device? getArgs(BuildContext context) =>
-      _device = ModalRoute.of(context)!.settings.arguments as Device?;
-
   Widget _buildContent(List<Ds18b20> list) {
     return RefreshIndicator(
       onRefresh: _refresh,
@@ -77,7 +66,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              _buildHeader(_device!.description),
+              _buildHeader(widget.device.description),
               _buildChart(list),
               _buildSubsciption(list)
             ],
@@ -90,12 +79,11 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _refresh() async {
     _zoomPanBehavior.reset();
     _isFirstLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(true, true);
+    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true, true);
   }
 
   Widget _buildChart(List<Ds18b20> list) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
+    return Expanded(
       child: SfCartesianChart(
           loadMoreIndicatorBuilder: (context, direction) {
             if (direction == ChartSwipeDirection.start) {
@@ -114,7 +102,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
           zoomPanBehavior: _zoomPanBehavior,
           plotAreaBorderWidth: 0,
           primaryXAxis: DateTimeAxis(
-            dateFormat: DateFormat('HH:mm'),
+            dateFormat: DateFormat('HH:mm\ndd/MM'),
             autoScrollingDelta: 1,
             autoScrollingDeltaType: DateTimeIntervalType.hours,
             autoScrollingMode: _isFirstLoading
@@ -141,7 +129,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
 
   Future _loadMore() async {
     _isFirstLoading = false;
-    context.read<Ds18b20Cubit>().getDs18b20(false, false);
+    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, false, false);
   }
 
   List<ChartSeries<Ds18b20, DateTime>> _getSplieAreaSeries(List<Ds18b20> list) {

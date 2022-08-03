@@ -8,7 +8,8 @@ import 'package:weather_app/pages/edit_device_page/edit_device_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditDeviceScreen extends StatefulWidget {
-  const EditDeviceScreen({Key? key}) : super(key: key);
+  const EditDeviceScreen({Key? key, required this.oldDevice}) : super(key: key);
+  final Device? oldDevice;
 
   @override
   State<EditDeviceScreen> createState() => _EditDeviceScreenState();
@@ -19,16 +20,14 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   final _descriptionController = TextEditingController();
   bool _isNotChacked = true;
   DeviceType _deviceType = DeviceType.unknown;
-  Device? _oldDevice;
   AppLocalizations? _stringRes;
 
   void _readData(BuildContext context) {
-    _oldDevice = ModalRoute.of(context)!.settings.arguments as Device?;
-    if (_oldDevice != null) {
+    if (widget.oldDevice != null) {
       setState(() {
-        _nameController.text = _oldDevice!.name;
-        _descriptionController.text = _oldDevice!.description;
-        _deviceType = _oldDevice!.deviceType();
+        _nameController.text = widget.oldDevice!.name;
+        _descriptionController.text = widget.oldDevice!.description;
+        _deviceType = widget.oldDevice!.deviceType();
       });
     }
   }
@@ -63,7 +62,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               _stringRes!.device_editor,
               style: Theme.of(context).textTheme.headline2,
             ),
-            actions: _oldDevice == null
+            actions: widget.oldDevice == null
                 ? null
                 : <Widget>[
                     IconButton(
@@ -89,7 +88,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
                 const SizedBox(height: 16),
                 Center(
                   child: ButtonComponent(
-                      text: _oldDevice == null
+                      text: widget.oldDevice == null
                           ? _stringRes!.add
                           : _stringRes!.save,
                       onPressed: _onSavePressed),
@@ -114,7 +113,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               style: Theme.of(context).textTheme.headline2,
               value: _deviceType,
               items: _buildDeviceTypeDropdownItems(),
-              onChanged: _oldDevice != null
+              onChanged: widget.oldDevice != null
                   ? null
                   : (type) => {
                         setState(() {
@@ -168,15 +167,15 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               name: _nameController.text,
               description: _descriptionController.text,
               type: _deviceType.name,
-              buttery: 100,
+              battery: 100,
               userId: ''),
         );
   }
 
   void _onSavePressed() {
-    if (_oldDevice != null) {
+    if (widget.oldDevice != null) {
       context.read<EditDeviceCubit>().updateDevice(
-            _oldDevice!.copyWith(
+            widget.oldDevice!.copyWith(
               name: _nameController.text,
               description: _descriptionController.text,
             ),
@@ -187,6 +186,6 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   }
 
   void _onDeletePressed() {
-    context.read<EditDeviceCubit>().deleteDevice(_oldDevice!);
+    context.read<EditDeviceCubit>().deleteDevice(widget.oldDevice!);
   }
 }

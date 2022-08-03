@@ -64,19 +64,19 @@ class FirestoreRepository {
   }
 
   Future<Result<List<Ds18b20>>> getDs18b20(
-      Device device, bool newLoading) async {
+      String deviceId, bool newLoading) async {
     try {
       QuerySnapshot<Map<String, dynamic>>? result;
       if (newLoading) {
         _lastLoadedDs18b20 = null;
         result = await db
-            .collection('ds18b20')
+            .collection('ds18b20_' + deviceId)
             .orderBy('time', descending: true)
             .limit(24)
             .get();
       } else {
         result = await db
-            .collection('ds18b20')
+            .collection('ds18b20_' + deviceId)
             .orderBy('time', descending: true)
             .startAfterDocument(_lastLoadedDs18b20!)
             .limit(24)
@@ -84,6 +84,7 @@ class FirestoreRepository {
       }
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
+      if (data.isEmpty) return Success(data);
       _lastLoadedDs18b20 = result.docs[result.docs.length - 1];
       return Success(data);
     } on FirebaseException catch (e) {

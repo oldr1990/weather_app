@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../../models/device.dart';
 import '../../models/ds18b20.dart';
 import '../../network/firestore_repository.dart';
 import '../../network/model_response.dart';
@@ -13,17 +12,11 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
   final FirestoreRepository repository = FirestoreRepository();
   List<Ds18b20> list = <Ds18b20>[];
 
-  Future getDs18b20(bool firstLoading, bool needShowLoading) async {
+  Future getDs18b20(
+      String deviceid, bool firstLoading, bool needShowLoading) async {
     if (needShowLoading) emit(Ds18b20Loading());
-    Result<List<Ds18b20>> result = await repository.getDs18b20(
-        Device(
-            id: '',
-            name: '',
-            description: '',
-            type: '',
-            buttery: 0,
-            userId: ''),
-        firstLoading);
+    Result<List<Ds18b20>> result =
+        await repository.getDs18b20(deviceid, firstLoading);
     if (result is Success) {
       result as Success<List<Ds18b20>>;
       if (firstLoading) list.clear();
