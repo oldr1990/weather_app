@@ -35,7 +35,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.device.id,
+          widget.device.name,
           overflow: TextOverflow.ellipsis,
         ),
       ),
@@ -83,48 +83,46 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   }
 
   Widget _buildChart(List<Ds18b20> list) {
-    return Expanded(
-      child: SfCartesianChart(
-          loadMoreIndicatorBuilder: (context, direction) {
-            if (direction == ChartSwipeDirection.start) {
-              return FutureBuilder(
-                future: _loadMore(),
-                builder: (BuildContext futureContext, AsyncSnapshot snapShot) {
-                  return snapShot.connectionState != ConnectionState.done
-                      ? const CircularProgressIndicator()
-                      : Container();
-                },
-              );
-            } else {
-              return Container();
-            }
-          },
-          zoomPanBehavior: _zoomPanBehavior,
-          plotAreaBorderWidth: 0,
-          primaryXAxis: DateTimeAxis(
-            dateFormat: DateFormat('HH:mm\ndd/MM'),
-            autoScrollingDelta: 1,
-            autoScrollingDeltaType: DateTimeIntervalType.hours,
-            autoScrollingMode: _isFirstLoading
-                ? AutoScrollingMode.end
-                : AutoScrollingMode.start,
+    return SfCartesianChart(
+        loadMoreIndicatorBuilder: (context, direction) {
+          if (direction == ChartSwipeDirection.start) {
+            return FutureBuilder(
+              future: _loadMore(),
+              builder: (BuildContext futureContext, AsyncSnapshot snapShot) {
+                return snapShot.connectionState != ConnectionState.done
+                    ? const CircularProgressIndicator()
+                    : Container();
+              },
+            );
+          } else {
+            return Container();
+          }
+        },
+        zoomPanBehavior: _zoomPanBehavior,
+        plotAreaBorderWidth: 0,
+        primaryXAxis: DateTimeAxis(
+          intervalType: DateTimeIntervalType.minutes,
+          dateFormat: DateFormat('HH:mm\ndd/MM'),
+          autoScrollingDelta: 1,
+          autoScrollingDeltaType: DateTimeIntervalType.hours,
+          autoScrollingMode: _isFirstLoading
+              ? AutoScrollingMode.end
+              : AutoScrollingMode.start,
+          labelStyle: Theme.of(context).textTheme.headline3,
+          interval: 10,
+          majorTickLines: const MajorTickLines(size: 2),
+          majorGridLines: const MajorGridLines(width: 2),
+        ),
+        primaryYAxis: NumericAxis(
+            maximum: 30.0,
+            minimum: 15.0,
             labelStyle: Theme.of(context).textTheme.headline3,
-            interval: 10,
-            majorTickLines: const MajorTickLines(size: 2),
-            majorGridLines: const MajorGridLines(width: 2),
-            edgeLabelPlacement: EdgeLabelPlacement.shift,
-          ),
-          primaryYAxis: NumericAxis(
-              maximum: 30.0,
-              minimum: 15.0,
-              labelStyle: Theme.of(context).textTheme.headline3,
-              labelAlignment: LabelAlignment.center,
-              labelFormat: '{value} °C',
-              axisLine: const AxisLine(width: 0),
-              majorTickLines: const MajorTickLines(size: 0)),
-          series: _getSplieAreaSeries(list),
-          tooltipBehavior: TooltipBehavior(enable: true)),
-    );
+            labelAlignment: LabelAlignment.center,
+            labelFormat: '{value} °C',
+            axisLine: const AxisLine(width: 0),
+            majorTickLines: const MajorTickLines(size: 0)),
+        series: _getSplieAreaSeries(list),
+        tooltipBehavior: TooltipBehavior(enable: true));
   }
 
   Future _loadMore() async {
@@ -152,7 +150,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     ];
   }
 
-  Widget _buildSubsciption(List<Ds18b20> list) {
+  Widget _buildSubsciption(List<Ds18b20?> list) {
     return Column(
       children: [
         Text(
@@ -178,9 +176,10 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     );
   }
 
-  String getRange(List<Ds18b20> list) {
-    final first = DateFormat('kk:mm dd.MM.yyyy').format(list.first.date);
-    final last = DateFormat('kk:mm dd.MM.yyyy').format(list.last.date);
-    return '$last - $first';
+  String getRange(List<Ds18b20?> list) {
+    final first = DateFormat('kk:mm dd.MM.yyyy').format(list.first!.date);
+    final last = DateFormat('kk:mm dd.MM.yyyy').format(list.last!.date);
+    return '$first - $last';
   }
+
 }

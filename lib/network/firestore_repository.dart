@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/models/ds18b20.dart';
+import 'package:weather_app/models/ds18b20_request.dart';
 import 'package:weather_app/network/error_extension_util.dart';
 import 'package:weather_app/network/model_response.dart';
 
@@ -11,7 +12,7 @@ import '../models/device.dart';
 class FirestoreRepository {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
-  DocumentSnapshot<Object?>? _lastLoadedDs18b20;
+
   Future<Result<List<Device>>> getDevices() async {
     try {
       final result = await db
@@ -63,29 +64,17 @@ class FirestoreRepository {
     }
   }
 
-  Future<Result<List<Ds18b20>>> getDs18b20(
-      String deviceId, bool newLoading) async {
+  Future<Result<List<Ds18b20>>> getDs18b20(Ds18b20Request searchData) async {
     try {
       QuerySnapshot<Map<String, dynamic>>? result;
-      if (newLoading) {
-        _lastLoadedDs18b20 = null;
-        result = await db
-            .collection('ds18b20_' + deviceId)
-            .orderBy('time', descending: true)
-            .limit(24)
-            .get();
-      } else {
-        result = await db
-            .collection('ds18b20_' + deviceId)
-            .orderBy('time', descending: true)
-            .startAfterDocument(_lastLoadedDs18b20!)
-            .limit(24)
-            .get();
-      }
+      result = await db
+          .collection('ds18b20_' + searchData.deviceId)
+          .where('time',
+              isLessThan: searchData.lastLoadedDate,
+              isGreaterThan: searchData.getDayBeforeLastLoaded())
+          .get();
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
-      if (data.isEmpty) return Success(data);
-      _lastLoadedDs18b20 = result.docs[result.docs.length - 1];
       return Success(data);
     } on FirebaseException catch (e) {
       return Error(e.message, e.getErrorType());

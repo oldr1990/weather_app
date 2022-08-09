@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:weather_app/pages/auth_page/auth_page.dart';
 import 'package:weather_app/settings/localization.dart';
@@ -12,9 +11,7 @@ import 'navigation.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  BlocOverrides.runZoned(
-    () => runApp(const MyApp()),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,10 +25,12 @@ class MyApp extends StatelessWidget {
     ]);
     return GlobalLoaderOverlay(
       child: MaterialApp(
-        supportedLocales: const [ locale,],
+        supportedLocales: const [
+          locale,
+        ],
         localizationsDelegates: localizationsDelegates,
         routes: navigationRoutes,
-        onGenerateRoute:navigationRoutesWithArgs,
+        onGenerateRoute: navigationRoutesWithArgs,
         theme: WeatherAppTheme.dark(),
         home: const AuthPage(),
       ),
