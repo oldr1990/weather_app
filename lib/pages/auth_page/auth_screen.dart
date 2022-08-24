@@ -7,7 +7,7 @@ import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
 import 'package:weather_app/pages/home_page/home_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:weather_app/utils/get_error_message.dart';
+import 'package:weather_app/utils/get_messages.dart';
 import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {

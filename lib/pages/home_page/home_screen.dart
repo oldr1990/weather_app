@@ -5,7 +5,7 @@ import 'package:weather_app/models/device.dart';
 import 'package:weather_app/pages/ds18b20_page/ds18b20_page.dart';
 import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
 import 'package:weather_app/pages/home_page/home_cubit.dart';
-import 'package:weather_app/utils/get_error_message.dart';
+import 'package:weather_app/utils/get_messages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../models/device_type.dart';
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null && result is String) {
       showSnackbar(context, result);
     }
-   refresh();
+    refresh();
   }
 
   Widget _buildAddDevice() {

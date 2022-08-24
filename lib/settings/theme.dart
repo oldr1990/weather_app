@@ -60,6 +60,7 @@ class WeatherAppTheme {
 
   static ThemeData light() {
     return ThemeData(
+      indicatorColor: Colors.green,
       brightness: Brightness.light,
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith((states) {
@@ -83,6 +84,7 @@ class WeatherAppTheme {
 
   static ThemeData dark() {
     return ThemeData(
+      indicatorColor: Colors.white,
       brightness: Brightness.dark,
       appBarTheme: AppBarTheme(
         foregroundColor: Colors.white,

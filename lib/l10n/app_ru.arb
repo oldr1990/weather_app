@@ -32,6 +32,27 @@
     "load_more": "Загрузить еще",
     "temperature": "Температура",
     "humidity": "Влажность",
-    "pressure": "Давление"
+    "pressure": "Давление",
+
+    "monday": "Понедельник",
+    "tuesday":"Вторник",
+    "wednesday":"Среда",
+    "thursday":"Четверг",
+    "friday":"Пятница",
+    "saturday":"Суббота",
+    "sunday":"Воскресение",
+
+    "january": "Января",
+    "fabruary": "Февраля",
+    "march": "Марта",
+    "april": "Апреля",
+    "may": "Мая",
+    "june": "Июня",
+    "july": "Июля",
+    "august": "Августа",
+    "september": "Сентября",
+    "october": "Октября",
+    "novermber": "Ноября",
+    "december": "Декабря"
 
 }

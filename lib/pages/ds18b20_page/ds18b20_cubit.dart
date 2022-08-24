@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:weather_app/models/ds18b20_request.dart';
@@ -24,7 +26,7 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
           newLoading: true,
           lastLoadedDate: _getTimeInSeconds());
     }
-    Result<List<Ds18b20>> result = await repository.getDs18b20(request);
+    Result<List<Ds18b20>> result = Success(getTestList()); //await repository.getDs18b20(request);
     if (result is Success) {
       result as Success<List<Ds18b20>>;
       if (kDebugMode) {
@@ -46,4 +48,22 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
   }
 
   int _getTimeInSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+  List<Ds18b20> getTestList() {
+    List<Ds18b20> list = [];
+    DateTime currentDate = DateTime.now();
+    double currentTemp = 20.0;
+    for (int i = 1; i < 20; i++) {
+      list.add(Ds18b20(date: currentDate, temperature: currentTemp));
+      currentDate = currentDate.subtract(const Duration(minutes: 10));
+      if (currentTemp >= 30) {
+        currentTemp--;
+      } else if (currentTemp <= 15) {
+        currentTemp++;
+      } else {
+        currentTemp += Random().nextInt(3) - 1;
+      }
+    }
+    return list;
+  }
 }
