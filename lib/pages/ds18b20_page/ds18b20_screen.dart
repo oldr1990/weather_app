@@ -22,6 +22,8 @@ class Ds18b20Screen extends StatefulWidget {
 class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   bool _showScrollUpButton = false;
   bool _isFirstLoading = true;
+  bool _isLoading = false;
+  bool _isEnd = false;
   late ZoomPanBehavior _zoomPanBehavior;
   final _controller = ScrollController();
 
@@ -31,7 +33,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     _zoomPanBehavior = ZoomPanBehavior(
       enablePanning: true,
     );
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true, true);
+    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
     super.initState();
   }
 
@@ -71,9 +73,12 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
               return ErrorComponent(
                   errorMessage: state.message.errorMessage!, onRetry: _refresh);
             } else if (state is Ds18b20Success) {
+              _isEnd = state.isEnd;
+              _isLoading = false;
               context.loaderOverlay.hide();
-              return _buildCustomSliver(state.device);
+              return _buildCustomSliver(state.device, state.isEnd);
             } else {
+              _isLoading = true;
               context.loaderOverlay.show();
               return Container();
             }
@@ -83,13 +88,15 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     );
   }
 
-  Widget _buildCustomSliver(List<Ds18b20> list) {
+  Widget _buildCustomSliver(List<Ds18b20> list, bool isEnd) {
     List<List<Ds18b20>> bigList = _getListOfLists(list);
     return CustomScrollView(
       controller: _controller,
       slivers: [
         SliverToBoxAdapter(child: _buildChart(list)),
         for (var i in bigList) _sliverStickyBuilder(i),
+        if (list.isNotEmpty)
+          SliverToBoxAdapter(child: FooterListTileComponent(isEnd: isEnd)),
       ],
     );
   }
@@ -97,24 +104,10 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _refresh() async {
     _zoomPanBehavior.reset();
     _isFirstLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true, true);
+    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
   }
 
   Widget _buildChart(List<Ds18b20> list) => SfCartesianChart(
-      loadMoreIndicatorBuilder: (context, direction) {
-        if (direction == ChartSwipeDirection.start) {
-          return FutureBuilder(
-            future: _loadMore(),
-            builder: (BuildContext futureContext, AsyncSnapshot snapShot) {
-              return snapShot.connectionState != ConnectionState.done
-                  ? const CircularProgressIndicator()
-                  : Container();
-            },
-          );
-        } else {
-          return Container();
-        }
-      },
       zoomPanBehavior: _zoomPanBehavior,
       plotAreaBorderWidth: 0,
       primaryXAxis: DateTimeAxis(
@@ -142,7 +135,10 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
 
   Future _loadMore() async {
     _isFirstLoading = false;
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, false, false);
+    _isLoading = true;
+    context
+        .read<Ds18b20Cubit>()
+        .getDs18b20(widget.device.id, false, needShowLoading: false);
   }
 
   List<ChartSeries<Ds18b20, DateTime>> _getSplieAreaSeries(
@@ -168,8 +164,8 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   List<List<Ds18b20>> _getListOfLists(List<Ds18b20> list) {
     List<List<Ds18b20>> majorList = [];
     List<Ds18b20> smallList = [];
-    for (int i = 1; i < list.length; i++) {
-      if (list[i].date.day != list[i - 1].date.day) {
+    for (int i = 0; i < list.length; i++) {
+      if (smallList.isNotEmpty && list[i].date.day != list[i - 1].date.day) {
         majorList.add(smallList.toList());
         smallList.clear();
       } else {
@@ -177,7 +173,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
       }
     }
     majorList.add(smallList);
-    return majorList.reversed.toList();
+    return majorList.toList();
   }
 
   SliverStickyHeader _sliverStickyBuilder(List<Ds18b20> list) =>
@@ -197,7 +193,9 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
       );
 
   void _onScroll() {
-    if (_isBottom) _loadMore();
+    if (_isBottom && !_isLoading && !_isEnd) {
+      _loadMore();
+    }
     bool isScrolled = _controller.offset >= 400;
     if (isScrolled != _showScrollUpButton) {
       setState(() {
@@ -210,6 +208,6 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     if (!_controller.hasClients) return false;
     final maxScroll = _controller.position.maxScrollExtent;
     final currentScroll = _controller.offset;
-    return currentScroll >= (maxScroll * 0.9);
+    return currentScroll >= (maxScroll * 0.95);
   }
 }

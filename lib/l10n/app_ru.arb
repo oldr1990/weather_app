@@ -11,6 +11,7 @@
     "error_user_not_found":"Пользователь не найден",
     "error_user_exists":"Пользователь уже существует",
     "error_no_internet_connection":"Нет подключения к интернету",
+    "erro_no_data_for_period": "Более ранние данные отсутсвуют",
 
     "devices": "Устройства",
     "add_device": "Добавить устройство",

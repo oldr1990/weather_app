@@ -6,3 +6,4 @@ export 'list_header.dart';
 export 'scroll_up_component.dart';
 export 'snackbar_component.dart';
 export 'temperature_tile.dart';
+export 'footer_list_tile_component.dart';
