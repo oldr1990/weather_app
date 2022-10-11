@@ -162,18 +162,25 @@ class _DeviceComponentState extends State<DeviceComponent> {
   }
 
   Widget _buildIcon(DeviceType type) {
+   const double _size = 40.0;
     switch (type) {
+      case DeviceType.bmp280:
+        return const Icon(
+          Icons.water_damage_outlined,
+          color: Colors.blue,
+          size: _size
+        );
       case DeviceType.ds18b20:
         return const Icon(
           Icons.thermostat,
           color: Colors.amber,
-          size: 40,
+          size: _size,
         );
       case DeviceType.unknown:
         return const Icon(
           Icons.device_unknown,
           color: Colors.grey,
-          size: 40,
+          size: _size,
         );
     }
   }
