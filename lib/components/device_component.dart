@@ -105,9 +105,15 @@ class _DeviceComponentState extends State<DeviceComponent> {
               child: Text("ID: ${widget.device.id}",
                   style: Theme.of(context).textTheme.bodyText1)),
         ),
-        _batteryIndicator(widget.device.battery)
+        _batteryIndicator(_getProcentage(widget.device.battery))
       ],
     );
+  }
+
+  int _getProcentage(int level) {
+    if (level > 100) return 100;
+    if (level < 0) return 0;
+    return level;
   }
 
   Widget _batteryIndicator(int batteryLevel) => Row(

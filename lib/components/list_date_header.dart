@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/utils/get_messages.dart';
 
-class ListHeader extends StatelessWidget {
+class ListDateHeader extends StatelessWidget {
   final DateTime dateTime;
-  const ListHeader({
+  const ListDateHeader({
     Key? key,
     required this.dateTime,
   }) : super(key: key);

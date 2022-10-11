@@ -178,7 +178,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
 
   SliverStickyHeader _sliverStickyBuilder(List<Ds18b20> list) =>
       SliverStickyHeader.builder(
-        builder: ((context, state) => ListHeader(dateTime: list[0].date)),
+        builder: ((context, state) => ListDateHeader(dateTime: list[0].date)),
         sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
                 ((context, index) => Padding(
