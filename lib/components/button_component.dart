@@ -13,7 +13,7 @@ class ButtonComponent extends StatefulWidget {
 class _ButtonComponentState extends State<ButtonComponent> {
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return ElevatedButton(
       style: ButtonStyle(
           padding: MaterialStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),

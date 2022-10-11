@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/models/ds18b20.dart';
+import 'package:weather_app/models/ds18b20_request.dart';
 import 'package:weather_app/network/error_extension_util.dart';
 import 'package:weather_app/network/model_response.dart';
 
@@ -11,7 +12,7 @@ import '../models/device.dart';
 class FirestoreRepository {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
-
+  int? _lastLoadedTime;
   Future<Result<List<Device>>> getDevices() async {
     try {
       final result = await db
@@ -63,18 +64,31 @@ class FirestoreRepository {
     }
   }
 
-  Future<Result<List<Ds18b20>>> getDs18b20(Device device) async {
+  Future<Result<List<Ds18b20>>> getDs18b20(Ds18b20Request searchData) async {
     try {
-      final result = await db
-          .collection('ds18b20/${device.id}')
-          .orderBy('time')
-          .limit(20)
-          .get();
+      QuerySnapshot<Map<String, dynamic>>? result;
+      if (searchData.newLoading) {
+        result = await db
+            .collection('ds18b20_' + searchData.deviceId)
+            .orderBy("time", descending: true)
+            .limit(100)
+            .get();
+      } else {
+        result = await db
+            .collection('ds18b20_' + searchData.deviceId)
+            .orderBy("time", descending: true)
+            .where('time', isLessThan: _lastLoadedTime)
+            .limit(100)
+            .get();
+      }
+      _lastLoadedTime = result.docs.last['time'] as int;
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
       return Success(data);
     } on FirebaseException catch (e) {
       return Error(e.message, e.getErrorType());
+    } on StateError {
+      return Success(List.empty());
     } catch (e) {
       return Error(e.toString(), ErrorType.unknown);
     }

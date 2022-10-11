@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app/components/device_component.dart';
-import 'package:weather_app/components/error_component.dart';
+import 'package:weather_app/components/components.dart';
 import 'package:weather_app/models/device.dart';
+import 'package:weather_app/pages/ds18b20_page/ds18b20_page.dart';
 import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
 import 'package:weather_app/pages/home_page/home_cubit.dart';
-import 'package:weather_app/utils/get_error_message.dart';
+import 'package:weather_app/utils/get_messages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../models/device_type.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +19,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AppLocalizations? _stringRes;
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          if (state is HomeInitial) {
-            context.read<HomeCubit>().loadDevicesList();
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is HomeLoading) {
+          if (state is HomeLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -45,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             state as HomeFailure;
             return ErrorComponent(
-                onRetry: () => {context.read<HomeCubit>().loadDevicesList()},
+                onRetry: refresh,
                 errorMessage: state.error.getErrorMessage(context));
           }
         },
@@ -57,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 4,
           backgroundColor: Theme.of(context).backgroundColor,
           onPressed: () => {
-            Navigator.pushNamed(context, EditDevicePage.route),
+            _navigateToEditPage(context, null),
           },
           child: const Icon(
             Icons.add,
@@ -68,25 +71,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future refresh() async {
+    context.read<HomeCubit>().loadDevicesList();
+  }
+
   Widget _buildDeviceList(List<Device> devices) {
-    return ListView.builder(
-      itemCount: devices.isEmpty ? 1 : devices.length,
-      itemBuilder: (context, index) {
-        if (devices.isNotEmpty) {
-          return DeviceComponent(
-              onTap: () => {
-                    Navigator.pushNamed(
-                      context,
-                      EditDevicePage.route,
-                      arguments: devices[index],
-                    ),
-                  },
-              device: devices[index]);
-        } else {
-          return _buildAddDevice();
-        }
-      },
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: ListView.builder(
+        itemCount: devices.isEmpty ? 1 : devices.length,
+        itemBuilder: (context, index) {
+          if (devices.isNotEmpty) {
+            return DeviceComponent(
+                onTap: () => {_navigateToDeviceData(devices[index])},
+                editTap: () => {_navigateToEditPage(context, devices[index])},
+                device: devices[index]);
+          } else {
+            return _buildAddDevice();
+          }
+        },
+      ),
     );
+  }
+
+  void _navigateToDeviceData(Device device) {
+    switch (device.deviceType()) {
+      case DeviceType.ds18b20:
+        Navigator.pushNamed(context, Ds18b20Page.route, arguments: device);
+        break;
+      default:
+        break;
+    }
+  }
+
+  Future<void> _navigateToEditPage(BuildContext context, Device? device) async {
+    final result = await Navigator.pushNamed(
+      context,
+      EditDevicePage.route,
+      arguments: device,
+    );
+    if (result != null && result is String) {
+      showSnackbar(context, result);
+    }
+    refresh();
   }
 
   Widget _buildAddDevice() {
@@ -104,16 +131,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey,
                     size: 40,
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(_stringRes!.add_device,
-                              style: Theme.of(context).textTheme.headline2),
-                        ],
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_stringRes!.add_device,
+                            style: Theme.of(context).textTheme.headline2),
+                      ],
                     ),
                   ),
                 ],

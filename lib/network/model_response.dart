@@ -12,5 +12,4 @@ class Error<T> extends Result<T> {
   Error(this.errorMessage, this.errorType);
 }
 
-//Todo: Add more error handling
 enum ErrorType { noInternet, loginData, userDisabled, userExist, unknown }

@@ -11,12 +11,14 @@
     "error_user_not_found":"Пользователь не найден",
     "error_user_exists":"Пользователь уже существует",
     "error_no_internet_connection":"Нет подключения к интернету",
+    "erro_no_data_for_period": "Более ранние данные отсутсвуют",
 
     "devices": "Устройства",
     "add_device": "Добавить устройство",
     "save": "Сохранить",
     "add": "Добавить",
     "delete": "Удалить",
+    "copied": "Скопировано в буфер обмена",
 
     "device_name": "Название",
     "device_type": "Тип :",
@@ -25,6 +27,33 @@
     "unknown_device": "Неизвестное устройство",
     
     "device_editor": "Редактор устройств",
-    "device_editor_success_message": "Устройство успешно добавлено/изменено"
+    "device_editor_success_message": "Устройство успешно добавлено/изменено",
+    
+    "showed_time_range": "Показано за период:",
+    "load_more": "Загрузить еще",
+    "temperature": "Температура",
+    "humidity": "Влажность",
+    "pressure": "Давление",
+
+    "monday": "Понедельник",
+    "tuesday":"Вторник",
+    "wednesday":"Среда",
+    "thursday":"Четверг",
+    "friday":"Пятница",
+    "saturday":"Суббота",
+    "sunday":"Воскресение",
+
+    "january": "Января",
+    "fabruary": "Февраля",
+    "march": "Марта",
+    "april": "Апреля",
+    "may": "Мая",
+    "june": "Июня",
+    "july": "Июля",
+    "august": "Августа",
+    "september": "Сентября",
+    "october": "Октября",
+    "novermber": "Ноября",
+    "december": "Декабря"
 
 }

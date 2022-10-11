@@ -29,7 +29,7 @@ class Ds18b20 {
 
   factory Ds18b20.fromMap(Map<String, dynamic> map) {
     return Ds18b20(
-      date: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
+      date: DateTime.fromMillisecondsSinceEpoch((map['time'] as int) * 1000),
       temperature: map['value'] as double,
     );
   }

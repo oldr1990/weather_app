@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:weather_app/pages/auth_page/auth_page.dart';
-import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
-import 'package:weather_app/pages/home_page/home_page.dart';
+import 'package:weather_app/settings/localization.dart';
 import 'package:weather_app/settings/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  BlocOverrides.runZoned(
-    () => runApp(const MyApp()),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,24 +23,14 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    var localizationsDelegates2 = [
-      AppLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-    ];
-    var locale = const Locale('ru', '');
     return GlobalLoaderOverlay(
       child: MaterialApp(
-        supportedLocales: [
+        supportedLocales: const [
           locale,
         ],
-        localizationsDelegates: localizationsDelegates2,
-        routes: {
-          AuthPage.route: (context) => const AuthPage(),
-          HomePage.route: (context) => const HomePage(),
-          EditDevicePage.route: (context) => const EditDevicePage(),
-        },
+        localizationsDelegates: localizationsDelegates,
+        routes: navigationRoutes,
+        onGenerateRoute: navigationRoutesWithArgs,
         theme: WeatherAppTheme.dark(),
         home: const AuthPage(),
       ),

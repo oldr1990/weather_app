@@ -7,7 +7,7 @@ import 'package:weather_app/network/model_response.dart';
 part 'edit_device_state.dart';
 
 class EditDeviceCubit extends Cubit<EditDeviceState> {
-  EditDeviceCubit() : super(EditDeviceInitial());
+  EditDeviceCubit() : super(EditDeviceNormal());
   final FirestoreRepository repository = FirestoreRepository();
 
   Future addDevice(Device device) async {
