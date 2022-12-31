@@ -98,6 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case DeviceType.ds18b20:
         Navigator.pushNamed(context, AppRoutes.ds18b20.name, arguments: device);
         break;
+      case DeviceType.bmp280:
+        Navigator.pushNamed(context, AppRoutes.bmp280.name, arguments: device);
+        break;
       default:
         break;
     }

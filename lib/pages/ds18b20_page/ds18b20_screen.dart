@@ -173,7 +173,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
         smallList.add(list[i]);
       }
     }
-    majorList.add(smallList);
+    majorList.add(smallList.toList());
     return majorList.toList();
   }
 

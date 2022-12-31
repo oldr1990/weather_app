@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/pages/bpm280_page/Bmp280_screen.dart';
+import 'package:weather_app/pages/bpm280_page/bmp280_cubit.dart';
 import 'models/device.dart';
 import 'pages/ds18b20_page/ds18b20_cubit.dart';
 import 'pages/ds18b20_page/ds18b20_screen.dart';
@@ -17,6 +19,13 @@ Route<dynamic>? Function(RouteSettings)? navigation = (settings) {
       return BlocProvider(
           create: (context) => Ds18b20Cubit(),
           child: Ds18b20Screen(device: args));
+    });
+  } else if (settings.name == AppRoutes.bmp280.name) {
+    final args = settings.arguments as Device;
+    return MaterialPageRoute(builder: (context) {
+      return BlocProvider(
+          create: (context) => Bmp280Cubit(),
+          child: Bmp280Screen(device: args));
     });
   } else if (settings.name == AppRoutes.editDevice.name) {
     final args = settings.arguments as Device?;
@@ -39,4 +48,4 @@ Route<dynamic>? Function(RouteSettings)? navigation = (settings) {
   return null;
 };
 
-enum AppRoutes { auth, home, editDevice, ds18b20 }
+enum AppRoutes { auth, home, editDevice, ds18b20, bmp280 }
