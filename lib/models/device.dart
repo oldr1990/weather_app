@@ -15,6 +15,8 @@ class Device {
     switch (type) {
       case 'ds18b20':
         return DeviceType.ds18b20;
+      case 'bmp280':
+        return DeviceType.bmp280;
       default:
         return DeviceType.unknown;
     }

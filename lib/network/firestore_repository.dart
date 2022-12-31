@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:weather_app/models/ds18b20.dart';
-import 'package:weather_app/models/ds18b20_request.dart';
+import 'package:weather_app/models/request_data.dart';
 import 'package:weather_app/network/error_extension_util.dart';
 import 'package:weather_app/network/model_response.dart';
 
@@ -64,7 +64,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<Result<List<Ds18b20>>> getDs18b20(Ds18b20Request searchData) async {
+  Future<Result<List<Ds18b20>>> getDs18b20(RequestData searchData) async {
     try {
       QuerySnapshot<Map<String, dynamic>>? result;
       if (searchData.newLoading) {

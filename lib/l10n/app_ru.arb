@@ -24,6 +24,7 @@
     "device_type": "Тип :",
     "device_description": "Описание",
     "ds18b20": "DS18B20",
+    "bmp280": "BMP-280",
     "unknown_device": "Неизвестное устройство",
     
     "device_editor": "Редактор устройств",

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:weather_app/models/ds18b20_request.dart';
+import 'package:weather_app/models/request_data.dart';
 
 import '../../models/ds18b20.dart';
 import '../../network/firestore_repository.dart';
@@ -14,16 +14,12 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
   Ds18b20Cubit() : super(Ds18b20Loading());
   final FirestoreRepository repository = FirestoreRepository();
   List<Ds18b20> list = <Ds18b20>[];
-  Ds18b20Request request =
-      Ds18b20Request(DateTime.now().millisecondsSinceEpoch ~/ 1000, "", true);
+  RequestData request = RequestData("", true);
 
-  Future getDs18b20(
-      String deviceid, bool firstLoading, {bool needShowLoading = true}) async {
+  Future getDs18b20(String deviceid, bool firstLoading,
+      {bool needShowLoading = true}) async {
     if (needShowLoading) emit(Ds18b20Loading());
-    request = request.copy(
-        deviceId: deviceid,
-        newLoading: firstLoading,
-        lastLoadedDate: _getTimeInSeconds());
+    request = request.copy(deviceId: deviceid, newLoading: firstLoading);
     Result<List<Ds18b20>> result = await repository.getDs18b20(request);
     if (result is Success) {
       result as Success<List<Ds18b20>>;
@@ -38,8 +34,6 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
       emit(Ds18b20Error(result));
     }
   }
-
-  int _getTimeInSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
   List<Ds18b20> getTestList() {
     List<Ds18b20> list = [];

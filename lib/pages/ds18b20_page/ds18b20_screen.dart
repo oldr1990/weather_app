@@ -15,6 +15,7 @@ import '../../models/ds18b20.dart';
 class Ds18b20Screen extends StatefulWidget {
   const Ds18b20Screen({Key? key, required this.device}) : super(key: key);
   final Device device;
+
   @override
   State<Ds18b20Screen> createState() => _Ds18b20ScreenState();
 }
@@ -184,10 +185,10 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
                 ((context, index) => Padding(
                     padding: const EdgeInsets.all(16),
                     child: DataListItem(
+                      time: list[index].date,
                       children: [
                         TemperatureTile(temperature: list[index].temperature),
                       ],
-                      time: list[index].date,
                     ))),
                 childCount: list.length)),
       );

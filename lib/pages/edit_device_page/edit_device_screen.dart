@@ -113,13 +113,11 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
               style: Theme.of(context).textTheme.headline2,
               value: _deviceType,
               items: _buildDeviceTypeDropdownItems(),
-              onChanged: widget.oldDevice != null
-                  ? null
-                  : (type) => {
-                        setState(() {
-                          _deviceType = type!;
-                        })
-                      }),
+              onChanged: (type) => {
+                    setState(() {
+                      _deviceType = type!;
+                    })
+                  }),
         ),
       ],
     );
@@ -128,7 +126,8 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   List<DropdownMenuItem<DeviceType>> _buildDeviceTypeDropdownItems() {
     return [
       _getItem(DeviceType.unknown, _stringRes!.unknown_device),
-      _getItem(DeviceType.ds18b20, _stringRes!.ds18b20)
+      _getItem(DeviceType.ds18b20, _stringRes!.ds18b20),
+      _getItem(DeviceType.bmp280, _stringRes!.bmp280)
     ];
   }
 
@@ -178,6 +177,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
             widget.oldDevice!.copyWith(
               name: _nameController.text,
               description: _descriptionController.text,
+              type: _deviceType.name,
             ),
           );
     } else {

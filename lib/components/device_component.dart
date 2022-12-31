@@ -166,7 +166,7 @@ class _DeviceComponentState extends State<DeviceComponent> {
     switch (type) {
       case DeviceType.bmp280:
         return const Icon(
-          Icons.water_damage_outlined,
+          Icons.home_work_rounded,
           color: Colors.blue,
           size: _size
         );
