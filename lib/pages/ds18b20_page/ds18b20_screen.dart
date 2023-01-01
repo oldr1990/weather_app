@@ -34,7 +34,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     _zoomPanBehavior = ZoomPanBehavior(
       enablePanning: true,
     );
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
+    context.read<Ds18b20Cubit>().getDs18b20(true);
     super.initState();
   }
 
@@ -89,13 +89,12 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     );
   }
 
-  Widget _buildCustomSliver(List<Ds18b20> list, bool isEnd) {
-    List<List<Ds18b20>> bigList = _getListOfLists(list);
+  Widget _buildCustomSliver(List<List<Ds18b20>> list, bool isEnd) {
     return CustomScrollView(
       controller: _controller,
       slivers: [
-        SliverToBoxAdapter(child: _buildChart(list)),
-        for (var i in bigList) _sliverStickyBuilder(i),
+        SliverToBoxAdapter(child: _buildChart(list.last)),
+        for (var i in list) _sliverStickyBuilder(i),
         if (list.isNotEmpty)
           SliverToBoxAdapter(child: FooterListTileComponent(isEnd: isEnd)),
       ],
@@ -105,7 +104,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _refresh() async {
     _zoomPanBehavior.reset();
     _isFirstLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
+    context.read<Ds18b20Cubit>().getDs18b20(true);
   }
 
   Widget _buildChart(List<Ds18b20> list) => SfCartesianChart(
@@ -137,9 +136,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _loadMore() async {
     _isFirstLoading = false;
     _isLoading = true;
-    context
-        .read<Ds18b20Cubit>()
-        .getDs18b20(widget.device.id, false, needShowLoading: false);
+    context.read<Ds18b20Cubit>().getDs18b20(false, needShowLoading: false);
   }
 
   List<ChartSeries<Ds18b20, DateTime>> _getSplieAreaSeries(
@@ -161,21 +158,6 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
                   <double>[0.1, 0.5, 0.9]);
             }),
       ];
-
-  List<List<Ds18b20>> _getListOfLists(List<Ds18b20> list) {
-    List<List<Ds18b20>> majorList = [];
-    List<Ds18b20> smallList = [];
-    for (int i = 0; i < list.length; i++) {
-      if (smallList.isNotEmpty && list[i].date.day != list[i - 1].date.day) {
-        majorList.add(smallList.toList());
-        smallList.clear();
-      } else {
-        smallList.add(list[i]);
-      }
-    }
-    majorList.add(smallList.toList());
-    return majorList.toList();
-  }
 
   SliverStickyHeader _sliverStickyBuilder(List<Ds18b20> list) =>
       SliverStickyHeader.builder(

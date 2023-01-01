@@ -12,7 +12,7 @@ class Ds18b20Error extends Ds18b20State {
 }
 
 class Ds18b20Success extends Ds18b20State {
-  final List<Ds18b20> device;
+  final List<List<Ds18b20>> device;
   final bool isEnd;
 
   Ds18b20Success(this.device, this.isEnd);

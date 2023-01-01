@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:weather_app/components/pressure_tile.dart';
 import 'package:weather_app/pages/bpm280_page/bmp280_cubit.dart';
 
 import '../../components/data_list_item.dart';
@@ -31,7 +32,7 @@ class _Bmp280ScreenState extends State<Bmp280Screen> {
   @override
   void initState() {
     _controller.addListener(_onScroll);
-    context.read<Bmp280Cubit>().getData(widget.device.id, true);
+    context.read<Bmp280Cubit>().getData(true);
     super.initState();
   }
 
@@ -106,6 +107,7 @@ class _Bmp280ScreenState extends State<Bmp280Screen> {
                       time: list[index].date,
                       children: [
                         TemperatureTile(temperature: list[index].temperature),
+                        PressureTile(pressure: list[index].pressure),
                       ],
                     ))),
                 childCount: list.length)),
@@ -113,9 +115,7 @@ class _Bmp280ScreenState extends State<Bmp280Screen> {
 
   Future _loadMore() async {
     _isLoading = true;
-    context
-        .read<Bmp280Cubit>()
-        .getData(widget.device.id, false, needShowLoading: false);
+    context.read<Bmp280Cubit>().getData(false, needShowLoading: false);
   }
 
   void _onScroll() {
@@ -131,7 +131,7 @@ class _Bmp280ScreenState extends State<Bmp280Screen> {
   }
 
   Future _refresh() async {
-    context.read<Bmp280Cubit>().getData(widget.device.id, true);
+    context.read<Bmp280Cubit>().getData(true);
   }
 
   bool get _isBottom {

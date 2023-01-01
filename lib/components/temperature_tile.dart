@@ -1,6 +1,5 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_app/utils/math_util.dart';
 
 class TemperatureTile extends StatelessWidget {
@@ -16,12 +15,13 @@ class TemperatureTile extends StatelessWidget {
       children: [
         Text(AppLocalizations.of(context)!.temperature + ": ",
             style: Theme.of(context).textTheme.headline3),
-        Text(
-          temperature.toString() + " °C",
-          style: GoogleFonts.openSans(
-            fontSize: 21.0,
-            fontWeight: FontWeight.w600,
-            color: _getColor(),
+        Flexible(
+          child: Text(
+            temperature.toString() + " °C",
+            style: Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(color: _getColor()),
           ),
         ),
       ],

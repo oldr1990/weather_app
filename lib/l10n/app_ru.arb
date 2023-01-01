@@ -35,6 +35,7 @@
     "temperature": "Температура",
     "humidity": "Влажность",
     "pressure": "Давление",
+    "pressure_measurement": " мм рт ст",
 
     "monday": "Понедельник",
     "tuesday":"Вторник",

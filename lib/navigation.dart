@@ -17,14 +17,14 @@ Route<dynamic>? Function(RouteSettings)? navigation = (settings) {
     final args = settings.arguments as Device;
     return MaterialPageRoute(builder: (context) {
       return BlocProvider(
-          create: (context) => Ds18b20Cubit(),
+          create: (context) => Ds18b20Cubit(args),
           child: Ds18b20Screen(device: args));
     });
   } else if (settings.name == AppRoutes.bmp280.name) {
     final args = settings.arguments as Device;
     return MaterialPageRoute(builder: (context) {
       return BlocProvider(
-          create: (context) => Bmp280Cubit(),
+          create: (context) => Bmp280Cubit(args),
           child: Bmp280Screen(device: args));
     });
   } else if (settings.name == AppRoutes.editDevice.name) {

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:weather_app/models/request_data.dart';
 
+import '../../models/device.dart';
 import '../../models/ds18b20.dart';
 import '../../network/firestore_repository.dart';
 import '../../network/model_response.dart';
@@ -11,15 +12,16 @@ import '../../network/model_response.dart';
 part 'ds18b20_state.dart';
 
 class Ds18b20Cubit extends Cubit<Ds18b20State> {
-  Ds18b20Cubit() : super(Ds18b20Loading());
+  final Device device;
+
+  Ds18b20Cubit(this.device) : super(Ds18b20Loading());
   final FirestoreRepository repository = FirestoreRepository();
-  List<Ds18b20> list = <Ds18b20>[];
+  List<Ds18b20> list = [];
   RequestData request = RequestData("", true);
 
-  Future getDs18b20(String deviceid, bool firstLoading,
-      {bool needShowLoading = true}) async {
+  Future getDs18b20(bool firstLoading, {bool needShowLoading = true}) async {
     if (needShowLoading) emit(Ds18b20Loading());
-    request = request.copy(deviceId: deviceid, newLoading: firstLoading);
+    request = request.copy(deviceId: device.id, newLoading: firstLoading);
     Result<List<Ds18b20>> result = await repository.getDs18b20(request);
     if (result is Success) {
       result as Success<List<Ds18b20>>;
@@ -28,7 +30,11 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
       }
       if (firstLoading) list.clear();
       list.addAll(result.value);
-      emit(Ds18b20Success(list, result.value.isEmpty));
+      if (list.length < 10 && result.value.isNotEmpty) {
+        getDs18b20(false);
+      } else {
+        emit(Ds18b20Success(_getListOfLists(list), result.value.isEmpty));
+      }
     } else {
       result as Error<List<Ds18b20>>;
       emit(Ds18b20Error(result));
@@ -51,5 +57,20 @@ class Ds18b20Cubit extends Cubit<Ds18b20State> {
       }
     }
     return list;
+  }
+
+  List<List<Ds18b20>> _getListOfLists(List<Ds18b20> list) {
+    List<List<Ds18b20>> majorList = [];
+    List<Ds18b20> smallList = [];
+    for (int i = 0; i < list.length; i++) {
+      if (smallList.isNotEmpty && list[i].date.day != list[i - 1].date.day) {
+        majorList.add(smallList.toList());
+        smallList.clear();
+      } else {
+        smallList.add(list[i]);
+      }
+    }
+    majorList.add(smallList.toList());
+    return majorList.toList();
   }
 }
