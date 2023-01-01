@@ -5,9 +5,9 @@ import 'package:weather_app/components/button_component.dart';
 import 'package:weather_app/components/snackbar_component.dart';
 import 'package:weather_app/models/user_data.dart';
 import 'package:weather_app/pages/auth_page/auth_cubit.dart';
-import 'package:weather_app/pages/home_page/home_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:weather_app/utils/get_messages.dart';
+import '../../navigation.dart';
 import 'auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -84,7 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
       listener: (context, state) {
         if (state is AuthSuccess) {
           context.loaderOverlay.hide();
-          Navigator.pushReplacementNamed(context, HomePage.route);
+          Navigator.pushReplacementNamed(context, AppRoutes.home.name);
         } else if (state is AuthError) {
           context.loaderOverlay.hide();
           showSnackbar(context, (state.error.getErrorMessage(context)));

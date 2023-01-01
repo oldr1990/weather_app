@@ -15,6 +15,7 @@ import '../../models/ds18b20.dart';
 class Ds18b20Screen extends StatefulWidget {
   const Ds18b20Screen({Key? key, required this.device}) : super(key: key);
   final Device device;
+
   @override
   State<Ds18b20Screen> createState() => _Ds18b20ScreenState();
 }
@@ -33,7 +34,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     _zoomPanBehavior = ZoomPanBehavior(
       enablePanning: true,
     );
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
+    context.read<Ds18b20Cubit>().getDs18b20(true);
     super.initState();
   }
 
@@ -88,13 +89,12 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     );
   }
 
-  Widget _buildCustomSliver(List<Ds18b20> list, bool isEnd) {
-    List<List<Ds18b20>> bigList = _getListOfLists(list);
+  Widget _buildCustomSliver(List<List<Ds18b20>> list, bool isEnd) {
     return CustomScrollView(
       controller: _controller,
       slivers: [
-        SliverToBoxAdapter(child: _buildChart(list)),
-        for (var i in bigList) _sliverStickyBuilder(i),
+        SliverToBoxAdapter(child: _buildChart(list.last)),
+        for (var i in list) _sliverStickyBuilder(i),
         if (list.isNotEmpty)
           SliverToBoxAdapter(child: FooterListTileComponent(isEnd: isEnd)),
       ],
@@ -104,7 +104,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _refresh() async {
     _zoomPanBehavior.reset();
     _isFirstLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(widget.device.id, true);
+    context.read<Ds18b20Cubit>().getDs18b20(true);
   }
 
   Widget _buildChart(List<Ds18b20> list) => SfCartesianChart(
@@ -136,9 +136,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _loadMore() async {
     _isFirstLoading = false;
     _isLoading = true;
-    context
-        .read<Ds18b20Cubit>()
-        .getDs18b20(widget.device.id, false, needShowLoading: false);
+    context.read<Ds18b20Cubit>().getDs18b20(false, needShowLoading: false);
   }
 
   List<ChartSeries<Ds18b20, DateTime>> _getSplieAreaSeries(
@@ -161,21 +159,6 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
             }),
       ];
 
-  List<List<Ds18b20>> _getListOfLists(List<Ds18b20> list) {
-    List<List<Ds18b20>> majorList = [];
-    List<Ds18b20> smallList = [];
-    for (int i = 0; i < list.length; i++) {
-      if (smallList.isNotEmpty && list[i].date.day != list[i - 1].date.day) {
-        majorList.add(smallList.toList());
-        smallList.clear();
-      } else {
-        smallList.add(list[i]);
-      }
-    }
-    majorList.add(smallList);
-    return majorList.toList();
-  }
-
   SliverStickyHeader _sliverStickyBuilder(List<Ds18b20> list) =>
       SliverStickyHeader.builder(
         builder: ((context, state) => ListDateHeader(dateTime: list[0].date)),
@@ -184,10 +167,10 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
                 ((context, index) => Padding(
                     padding: const EdgeInsets.all(16),
                     child: DataListItem(
+                      time: list[index].date,
                       children: [
                         TemperatureTile(temperature: list[index].temperature),
                       ],
-                      time: list[index].date,
                     ))),
                 childCount: list.length)),
       );

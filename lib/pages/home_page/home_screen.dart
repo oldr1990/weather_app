@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/components/components.dart';
 import 'package:weather_app/models/device.dart';
-import 'package:weather_app/pages/ds18b20_page/ds18b20_page.dart';
-import 'package:weather_app/pages/edit_device_page/edit_device_page.dart';
 import 'package:weather_app/pages/home_page/home_cubit.dart';
 import 'package:weather_app/utils/get_messages.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../models/device_type.dart';
+import '../../navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -97,7 +96,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigateToDeviceData(Device device) {
     switch (device.deviceType()) {
       case DeviceType.ds18b20:
-        Navigator.pushNamed(context, Ds18b20Page.route, arguments: device);
+        Navigator.pushNamed(context, AppRoutes.ds18b20.name, arguments: device);
+        break;
+      case DeviceType.bmp280:
+        Navigator.pushNamed(context, AppRoutes.bmp280.name, arguments: device);
         break;
       default:
         break;
@@ -107,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _navigateToEditPage(BuildContext context, Device? device) async {
     final result = await Navigator.pushNamed(
       context,
-      EditDevicePage.route,
+      AppRoutes.editDevice.name,
       arguments: device,
     );
     if (result != null && result is String) {
@@ -118,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildAddDevice() {
     return GestureDetector(
-        onTap: () => {Navigator.pushNamed(context, EditDevicePage.route)},
+        onTap: () => {Navigator.pushNamed(context, AppRoutes.editDevice.name)},
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(

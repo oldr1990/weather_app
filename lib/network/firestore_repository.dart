@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:weather_app/models/bmp280.dart';
 import 'package:weather_app/models/ds18b20.dart';
-import 'package:weather_app/models/ds18b20_request.dart';
+import 'package:weather_app/models/request_data.dart';
 import 'package:weather_app/network/error_extension_util.dart';
 import 'package:weather_app/network/model_response.dart';
 
@@ -13,6 +14,7 @@ class FirestoreRepository {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
   int? _lastLoadedTime;
+
   Future<Result<List<Device>>> getDevices() async {
     try {
       final result = await db
@@ -64,7 +66,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<Result<List<Ds18b20>>> getDs18b20(Ds18b20Request searchData) async {
+  Future<Result<List<Ds18b20>>> getDs18b20(RequestData searchData) async {
     try {
       QuerySnapshot<Map<String, dynamic>>? result;
       if (searchData.newLoading) {
@@ -84,6 +86,36 @@ class FirestoreRepository {
       _lastLoadedTime = result.docs.last['time'] as int;
       final data =
           result.docs.map((doc) => Ds18b20.fromMap(doc.data())).toList();
+      return Success(data);
+    } on FirebaseException catch (e) {
+      return Error(e.message, e.getErrorType());
+    } on StateError {
+      return Success(List.empty());
+    } catch (e) {
+      return Error(e.toString(), ErrorType.unknown);
+    }
+  }
+
+  Future<Result<List<BMP280>>> getBmp280(RequestData searchData) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>>? result;
+      if (searchData.newLoading) {
+        result = await db
+            .collection('bmp280_' + searchData.deviceId)
+            .orderBy("time", descending: true)
+            .limit(100)
+            .get();
+      } else {
+        result = await db
+            .collection('bmp280_' + searchData.deviceId)
+            .orderBy("time", descending: true)
+            .where('time', isLessThan: _lastLoadedTime)
+            .limit(100)
+            .get();
+      }
+      _lastLoadedTime = result.docs.last['time'] as int;
+      final data =
+          result.docs.map((doc) => BMP280.fromMap(doc.data())).toList();
       return Success(data);
     } on FirebaseException catch (e) {
       return Error(e.message, e.getErrorType());

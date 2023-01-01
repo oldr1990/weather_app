@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:weather_app/pages/auth_page/auth_page.dart';
 import 'package:weather_app/settings/localization.dart';
 import 'package:weather_app/settings/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,14 +24,13 @@ class MyApp extends StatelessWidget {
     ]);
     return GlobalLoaderOverlay(
       child: MaterialApp(
+        initialRoute: AppRoutes.auth.name,
         supportedLocales: const [
           locale,
         ],
         localizationsDelegates: localizationsDelegates,
-        routes: navigationRoutes,
-        onGenerateRoute: navigationRoutesWithArgs,
+        onGenerateRoute: navigation,
         theme: WeatherAppTheme.dark(),
-        home: const AuthPage(),
       ),
     );
   }
