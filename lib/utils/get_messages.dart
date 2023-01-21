@@ -47,7 +47,7 @@ extension IntGetMessages on DateTime {
       case DateTime.january:
         return strings.january;
       case DateTime.february:
-        return strings.fabruary;
+        return strings.february;
       case DateTime.march:
         return strings.march;
       case DateTime.april:
@@ -65,7 +65,7 @@ extension IntGetMessages on DateTime {
       case DateTime.october:
         return strings.october;
       case DateTime.november:
-        return strings.novermber;
+        return strings.november;
       default:
         return strings.december;
     }

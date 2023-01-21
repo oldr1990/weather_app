@@ -46,7 +46,7 @@
     "sunday":"Воскресение",
 
     "january": "Января",
-    "fabruary": "Февраля",
+    "february": "Февраля",
     "march": "Марта",
     "april": "Апреля",
     "may": "Мая",
@@ -55,7 +55,7 @@
     "august": "Августа",
     "september": "Сентября",
     "october": "Октября",
-    "novermber": "Ноября",
+    "november": "Ноября",
     "december": "Декабря"
 
 }

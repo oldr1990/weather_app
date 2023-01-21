@@ -25,6 +25,8 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   bool _isFirstLoading = true;
   bool _isLoading = false;
   bool _isEnd = false;
+
+  get cubit => context.read<Ds18b20Cubit>();
   late ZoomPanBehavior _zoomPanBehavior;
   final _controller = ScrollController();
 
@@ -34,7 +36,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
     _zoomPanBehavior = ZoomPanBehavior(
       enablePanning: true,
     );
-    context.read<Ds18b20Cubit>().getDs18b20(true);
+    cubit.getDs18b20(true);
     super.initState();
   }
 
@@ -104,7 +106,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _refresh() async {
     _zoomPanBehavior.reset();
     _isFirstLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(true);
+    cubit.getDs18b20(true);
   }
 
   Widget _buildChart(List<Ds18b20> list) => SfCartesianChart(
@@ -136,7 +138,7 @@ class _Ds18b20ScreenState extends State<Ds18b20Screen> {
   Future _loadMore() async {
     _isFirstLoading = false;
     _isLoading = true;
-    context.read<Ds18b20Cubit>().getDs18b20(false, needShowLoading: false);
+    cubit.getDs18b20(false, needShowLoading: false);
   }
 
   List<ChartSeries<Ds18b20, DateTime>> _getSplieAreaSeries(

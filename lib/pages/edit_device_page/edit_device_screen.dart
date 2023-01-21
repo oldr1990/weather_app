@@ -21,6 +21,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   bool _isNotChacked = true;
   DeviceType _deviceType = DeviceType.unknown;
   AppLocalizations? _stringRes;
+  get bloc => context.read<EditDeviceCubit>();
 
   void _readData(BuildContext context) {
     if (widget.oldDevice != null) {
@@ -160,7 +161,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   }
 
   void _addDevice() {
-    context.read<EditDeviceCubit>().addDevice(
+    bloc.addDevice(
           Device(
               id: "",
               name: _nameController.text,
@@ -173,7 +174,7 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
 
   void _onSavePressed() {
     if (widget.oldDevice != null) {
-      context.read<EditDeviceCubit>().updateDevice(
+      bloc.updateDevice(
             widget.oldDevice!.copyWith(
               name: _nameController.text,
               description: _descriptionController.text,
@@ -186,6 +187,6 @@ class _EditDeviceScreenState extends State<EditDeviceScreen> {
   }
 
   void _onDeletePressed() {
-    context.read<EditDeviceCubit>().deleteDevice(widget.oldDevice!);
+    bloc.deleteDevice(widget.oldDevice!);
   }
 }
