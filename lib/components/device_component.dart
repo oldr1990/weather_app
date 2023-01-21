@@ -156,7 +156,7 @@ class _DeviceComponentState extends State<DeviceComponent> {
 
   Color _getColor(int battery) {
     if (battery >= 75) return Colors.green.shade800;
-    if (battery >= 50) return const Color.fromARGB(255, 104, 121, 5);
+    if (battery >= 50) return const Color.fromARGB(255, 232, 239, 24);
     if (battery >= 25) return Colors.orange.shade800;
     return Colors.red.shade800;
   }
