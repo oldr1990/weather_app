@@ -11,14 +11,14 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  intl: ^0.17.0
+  intl: ^0.18.0
   cupertino_icons: ^1.0.2
   http: ^0.13.3
   loader_overlay: ^2.0.6
   flutter_bloc: ^8.0.1
   stream_transform: ^2.0.0
   firebase_auth: ^4.2.1
-  google_fonts: ^3.0.0
+  google_fonts: ^4.0.3
   firebase_core: ^2.4.0
   cloud_firestore: ^4.2.0
   shared_preferences: ^2.0.15
